@@ -1,6 +1,6 @@
 # AQ Bible Search
 
-A simple web application for searching Bible verses by AQ (Alpha-Numeric Quantification) values.
+A simple web application for searching Bible verses by AQ (Alphanumeric Qabbala) values.
 
 ## Running the Application
 
