@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQ Bible Search</title>
+</head>
+<body>
+    <h1>AQ Bible Search</h1>
+    
+    <form id="searchForm">
+        <p>
+            <label for="searchInput">Search text:</label>
+            <input type="text" id="searchInput" />
+            <button type="button" id="searchButton">Search</button>
+        </p>
+        <p>
+            <label for="maxWords">Max phrase length:</label>
+            <input type="number" id="maxWords" value="10" min="1" max="50" />
+        </p>
+    </form>
+
+    <p id="loading">Loading Bible text...</p>
+
+    <div id="stats"></div>
+
+    <div id="results"></div>
+
+    <script>
+        let words = [];
+        let verses = [];
+        let cumsum = [];
+        let cumsumMap = new Map();
+        let isLoaded = false;
+
+        // Calculate AQ value for a single word
+        function calculateAQ(word) {
+            let sum = 0;
+            for (let char of word) {
+                if (char >= 'A' && char <= 'Z') {
+                    sum += 10 + (char.charCodeAt(0) - 'A'.charCodeAt(0));
+                } else if (char >= 'a' && char <= 'z') {
+                    sum += 10 + (char.charCodeAt(0) - 'a'.charCodeAt(0));
+                } else if (char >= '0' && char <= '9') {
+                    sum += parseInt(char);
+                }
+                // Ignore spaces, punctuation, and other characters
+            }
+            return sum;
+        }
+
+        // Calculate AQ value for an entire string (sum of all words)
+        function calculateStringAQ(text) {
+            // Split by whitespace and punctuation, keep alphanumeric sequences
+            const words = text.toLowerCase().match(/[a-z0-9]+/gi) || [];
+            return words.reduce((sum, word) => sum + calculateAQ(word), 0);
+        }
+
+        // Parse verse reference from text like "Genesis 1:1"
+        function parseVerseRef(line) {
+            const match = line.match(/^([A-Za-z0-9\s]+?)\s+(\d+):(\d+)\t/);
+            if (match) {
+                return {
+                    book: match[1].trim(),
+                    chapter: parseInt(match[2]),
+                    verse: parseInt(match[3]),
+                    fullRef: `${match[1].trim()} ${match[2]}:${match[3]}`
+                };
+            }
+            return null;
+        }
+
+        // Extract words from verse text
+        function extractWords(text) {
+            // Match alphanumeric sequences (words with letters and/or numbers)
+            return text.toLowerCase().match(/[a-z0-9]+/gi) || [];
+        }
+
+        // Load and parse the Bible text
+        async function loadBible() {
+            try {
+                const response = await fetch('kjv.txt');
+                const text = await response.text();
+                const lines = text.split('\n');
+
+                // Skip header lines (first 2 lines)
+                for (let i = 2; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    const verseRef = parseVerseRef(line);
+                    if (!verseRef) continue;
+
+                    // Extract verse text (after the tab)
+                    const tabIndex = line.indexOf('\t');
+                    if (tabIndex === -1) continue;
+                    
+                    const verseText = line.substring(tabIndex + 1);
+                    const verseWords = extractWords(verseText);
+
+                    // Store verse info
+                    verses.push({
+                        ref: verseRef,
+                        text: verseText,
+                        wordIndices: [] // Will store indices into words array
+                    });
+
+                    const verseIndex = verses.length - 1;
+
+                    // Add words to global array
+                    for (let word of verseWords) {
+                        const aq = calculateAQ(word);
+                        const wordIndex = words.length;
+                        words.push({
+                            word: word,
+                            aq: aq,
+                            verseIndex: verseIndex
+                        });
+                        verses[verseIndex].wordIndices.push(wordIndex);
+                    }
+                }
+
+                // Build cumulative sum array
+                cumsum = [0];
+                for (let i = 0; i < words.length; i++) {
+                    cumsum.push(cumsum[i] + words[i].aq);
+                }
+
+                // Build map: cumsum value -> array of indices
+                for (let i = 0; i < cumsum.length; i++) {
+                    const sum = cumsum[i];
+                    if (!cumsumMap.has(sum)) {
+                        cumsumMap.set(sum, []);
+                    }
+                    cumsumMap.get(sum).push(i);
+                }
+
+                isLoaded = true;
+                document.getElementById('loading').style.display = 'none';
+                console.log(`Loaded ${words.length} words from ${verses.length} verses`);
+            } catch (error) {
+                console.error('Error loading Bible:', error);
+                document.getElementById('loading').textContent = 'Error loading Bible text.';
+            }
+        }
+
+        // Get verse reference for a word index
+        function getVerseRef(wordIndex) {
+            if (wordIndex >= words.length) return null;
+            return verses[words[wordIndex].verseIndex].ref;
+        }
+
+        // Get phrase text from word indices - returns complete phrase without truncation
+        function getPhraseText(startIndex, endIndex) {
+            if (startIndex >= endIndex || endIndex > words.length) return '';
+            
+            // Simply collect all words in the range
+            // The words array already contains the word text (lowercase)
+            let phraseWords = [];
+            for (let i = startIndex; i < endIndex; i++) {
+                phraseWords.push(words[i].word);
+            }
+            
+            return phraseWords.join(' ');
+        }
+
+        // Search for phrases with target AQ sum
+        function searchAQ(targetAQ, maxWords) {
+            const results = [];
+            const seen = new Set();
+
+            // For each position, try to find matching phrases
+            for (let i = 0; i < cumsum.length; i++) {
+                const targetSum = cumsum[i] + targetAQ;
+                const matches = cumsumMap.get(targetSum) || [];
+                
+                for (let j of matches) {
+                    if (j > i && j <= i + maxWords) {
+                        const startIndex = i;
+                        const endIndex = j;
+                        const wordCount = endIndex - startIndex;
+                        
+                        // Create unique key for deduplication (use indices to allow same phrase at different positions)
+                        const phraseText = getPhraseText(startIndex, endIndex).toLowerCase();
+                        const verseRef = getVerseRef(startIndex);
+                        if (!verseRef) continue;
+                        
+                        const key = `${startIndex}-${endIndex}`;
+                        if (seen.has(key)) continue;
+                        seen.add(key);
+                        
+                        results.push({
+                            ref: verseRef.fullRef,
+                            text: getPhraseText(startIndex, endIndex),
+                            wordCount: wordCount,
+                            startIndex: startIndex,
+                            endIndex: endIndex,
+                            verseIndex: words[startIndex].verseIndex
+                        });
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        // Display search results
+        function displayResults(results, inputText, inputAQ) {
+            const statsDiv = document.getElementById('stats');
+            const resultsDiv = document.getElementById('results');
+
+            // Group results by phrase text (case-insensitive)
+            const grouped = new Map();
+            results.forEach(result => {
+                const phraseKey = result.text.toLowerCase();
+                if (!grouped.has(phraseKey)) {
+                    grouped.set(phraseKey, {
+                        text: result.text,
+                        wordCount: result.wordCount,
+                        refs: []
+                    });
+                }
+                grouped.get(phraseKey).refs.push({
+                    ref: result.ref,
+                    verseIndex: result.verseIndex
+                });
+            });
+
+            // Convert to array and sort references within each group by verseIndex (biblical order)
+            const groupedArray = Array.from(grouped.values());
+            groupedArray.forEach(group => {
+                // Sort references by verseIndex (maintains biblical order since verses are loaded in order)
+                group.refs.sort((a, b) => a.verseIndex - b.verseIndex);
+            });
+
+            // Sort groups: by word count (longest first), then alphabetically by phrase
+            groupedArray.sort((a, b) => {
+                if (b.wordCount !== a.wordCount) {
+                    return b.wordCount - a.wordCount;
+                }
+                return a.text.toLowerCase().localeCompare(b.text.toLowerCase());
+            });
+
+            // Update stats
+            const totalPhrases = groupedArray.length;
+            const totalOccurrences = results.length;
+            statsDiv.innerHTML = `
+                <p><strong>Input:</strong> "${inputText}"</p>
+                <p><strong>AQ Sum:</strong> ${inputAQ}</p>
+                <p><strong>Results:</strong> ${totalPhrases} unique phrase${totalPhrases !== 1 ? 's' : ''} (${totalOccurrences} total occurrence${totalOccurrences !== 1 ? 's' : ''})</p>
+            `;
+            statsDiv.style.display = 'block';
+
+            // Display results
+            if (groupedArray.length === 0) {
+                resultsDiv.innerHTML = '<p>No phrases found with matching AQ sum.</p>';
+            } else {
+                const list = document.createElement('ul');
+                groupedArray.forEach(group => {
+                    const item = document.createElement('li');
+                    const refsText = group.refs.map(r => r.ref).join(', ');
+                    const count = group.refs.length;
+                    item.innerHTML = `"${group.text}" (${group.wordCount} word${group.wordCount !== 1 ? 's' : ''}) - ${refsText} [${count} occurrence${count !== 1 ? 's' : ''}]`;
+                    list.appendChild(item);
+                });
+                resultsDiv.innerHTML = '';
+                resultsDiv.appendChild(list);
+            }
+            resultsDiv.style.display = 'block';
+        }
+
+        // Handle search
+        function handleSearch() {
+            if (!isLoaded) {
+                alert('Bible text is still loading. Please wait...');
+                return;
+            }
+
+            const inputText = document.getElementById('searchInput').value.trim();
+            if (!inputText) {
+                alert('Please enter text to search.');
+                return;
+            }
+
+            const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
+            
+            // Calculate AQ sum of input
+            const inputAQ = calculateStringAQ(inputText);
+            
+            // Search for matching phrases
+            const results = searchAQ(inputAQ, maxWords);
+            
+            // Display results
+            displayResults(results, inputText, inputAQ);
+        }
+
+        // Event listeners
+        document.getElementById('searchButton').addEventListener('click', handleSearch);
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+
+        // Load Bible on page load
+        window.addEventListener('load', () => {
+            loadBible();
+        });
+    </script>
+</body>
+</html>
