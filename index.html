@@ -27,6 +27,20 @@
     <div id="results"></div>
 
     <script>
+        // Escape HTML to prevent XSS
+        function escapeHTML(str) {
+            if (!str) return "";
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
         let words = [];
         let verses = [];
         let cumsum = [];
@@ -245,7 +259,7 @@
             const totalPhrases = groupedArray.length;
             const totalOccurrences = results.length;
             statsDiv.innerHTML = `
-                <p><strong>Input:</strong> "${inputText}"</p>
+                <p><strong>Input:</strong> "${escapeHTML(inputText)}"</p>
                 <p><strong>AQ Sum:</strong> ${inputAQ}</p>
                 <p><strong>Results:</strong> ${totalPhrases} unique phrase${totalPhrases !== 1 ? 's' : ''} (${totalOccurrences} total occurrence${totalOccurrences !== 1 ? 's' : ''})</p>
             `;
@@ -260,7 +274,7 @@
                     const item = document.createElement('li');
                     const refsText = group.refs.map(r => r.ref).join(', ');
                     const count = group.refs.length;
-                    item.innerHTML = `"${group.text}" (${group.wordCount} word${group.wordCount !== 1 ? 's' : ''}) - ${refsText} [${count} occurrence${count !== 1 ? 's' : ''}]`;
+                    item.innerHTML = `"${escapeHTML(group.text)}" (${group.wordCount} word${group.wordCount !== 1 ? 's' : ''}) - ${escapeHTML(refsText)} [${count} occurrence${count !== 1 ? 's' : ''}]`;
                     list.appendChild(item);
                 });
                 resultsDiv.innerHTML = '';
