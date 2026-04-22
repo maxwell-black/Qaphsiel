@@ -101,8 +101,7 @@
                     // Store verse info
                     verses.push({
                         ref: verseRef,
-                        text: verseText,
-                        wordIndices: [] // Will store indices into words array
+                        text: verseText
                     });
 
                     const verseIndex = verses.length - 1;
@@ -110,13 +109,11 @@
                     // Add words to global array
                     for (let word of verseWords) {
                         const aq = calculateAQ(word);
-                        const wordIndex = words.length;
                         words.push({
                             word: word,
                             aq: aq,
                             verseIndex: verseIndex
                         });
-                        verses[verseIndex].wordIndices.push(wordIndex);
                     }
                 }
 
