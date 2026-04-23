@@ -303,7 +303,7 @@ function findLexicalTwins(targetAQ) {
 function generateNumogramSVG(inputAQ) {
     const containerId = 'numogram-' + Math.random().toString(36).slice(2, 10);
     setTimeout(() => highlightNumogram(containerId, inputAQ), 0);
-    return `<div id="${containerId}" class="numogram-container" style="max-width: 720px; margin: 0 auto; background: black; border-radius: 8px;">${numogramSvgText}</div>`;
+    return `<div id="${containerId}" class="numogram-container" style="max-width: 820px; margin: 0 auto; background: black; border-radius: 8px;">${numogramSvgText}</div>`;
 }
 
 function highlightNumogram(containerId, inputAQ) {

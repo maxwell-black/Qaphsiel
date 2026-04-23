@@ -1,4 +1,4 @@
-<svg id="numogram-svg" class="numogram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 820" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
+<svg id="numogram-svg" class="numogram" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" width="100%" height="auto" preserveAspectRatio="xMidYMid meet">
 <title>CCRU Numogram</title>
 <desc>
 Compact Pandemonium Matrix per CCRU Writings 1997-2003 (Part-8).
@@ -70,20 +70,20 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
     letter-spacing: 2px; 
 }
 
-.gate-channel { 
-    stroke: var(--text-muted, #003d1a); 
-    stroke-width: 1.5; 
-    fill: none; 
-    stroke-dasharray: 4 3; 
-    opacity: 0.7; 
-    transition: all 0.3s; 
+.gate-channel {
+    stroke: var(--text-muted, #003d1a);
+    stroke-width: 1.8;
+    fill: none;
+    stroke-dasharray: 4 3;
+    opacity: 0.8;
+    transition: all 0.3s;
 }
-.gate-marker { 
-    fill: #050a05; 
-    stroke: var(--primary-color, #00ff66); 
-    stroke-width: 1.5; 
-    opacity: 0.85; 
-    transition: all 0.3s; 
+.gate-marker {
+    fill: #0a1a0a;
+    stroke: var(--primary-color, #00ff66);
+    stroke-width: 2;
+    opacity: 1;
+    transition: all 0.3s;
 }
 .gate-label { 
     fill: var(--primary-color, #00ff66); 
@@ -208,13 +208,13 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
 <text class="current-label" x="360" y="690">WARP</text>
 <g class="gate-group" id="gate-00">
     <path class="gate-channel" d="M 440,76 A 20,20 0 1,1 464,100" marker-end="url(#arrow)"/>
-    <circle class="gate-marker" cx="470" cy="78" r="10"/>
-    <text class="gate-label" x="470" y="78">0</text>
+    <circle class="gate-marker" cx="470" cy="80" r="10"/>
+    <text class="gate-label" x="470" y="80">0</text>
 </g>
 <g class="gate-group" id="gate-01">
     <path class="gate-channel" d="M 550,216 A 20,20 0 1,1 574,240" marker-end="url(#arrow)"/>
-    <circle class="gate-marker" cx="580" cy="218" r="10"/>
-    <text class="gate-label" x="580" y="218">1</text>
+    <circle class="gate-marker" cx="580" cy="220" r="10"/>
+    <text class="gate-label" x="580" y="220">1</text>
 </g>
 <g class="gate-group" id="gate-03">
     <line class="gate-channel" x1="600" y1="430" x2="410" y2="730" marker-end="url(#arrow)"/>
@@ -228,8 +228,8 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
 </g>
 <g class="gate-group" id="gate-10">
     <line class="gate-channel" x1="540" y1="610" x2="550" y2="240" marker-end="url(#arrow)"/>
-    <circle class="gate-marker" cx="545" cy="425" r="11"/>
-    <text class="gate-label" x="545" y="425">10</text>
+    <circle class="gate-marker" cx="515" cy="425" r="11"/>
+    <text class="gate-label" x="515" y="425">10</text>
 </g>
 <g class="gate-group" id="gate-15">
     <line class="gate-channel" x1="180" y1="610" x2="310" y2="730" marker-end="url(#arrow)"/>
@@ -237,9 +237,9 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
     <text class="gate-label" x="245" y="670">15</text>
 </g>
 <g class="gate-group" id="gate-21">
-    <path class="gate-channel" d="M 310,730 Q 360,775 410,730" marker-end="url(#arrow)"/>
-    <circle class="gate-marker" cx="360" cy="760" r="11"/>
-    <text class="gate-label" x="360" y="760">21</text>
+    <path class="gate-channel" d="M 310,730 Q 360,794 410,730" marker-end="url(#arrow)"/>
+    <circle class="gate-marker" cx="360" cy="762" r="11"/>
+    <text class="gate-label" x="360" y="762">21</text>
 </g>
 <g class="gate-group" id="gate-28">
     <line class="gate-channel" x1="120" y1="430" x2="550" y2="240" marker-end="url(#arrow)"/>
@@ -253,8 +253,8 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
 </g>
 <g class="gate-group" id="gate-45">
     <path class="gate-channel" d="M 280,76 A 20,20 0 1,0 256,100" marker-end="url(#arrow)"/>
-    <circle class="gate-marker" cx="250" cy="78" r="10"/>
-    <text class="gate-label" x="250" y="78">45</text>
+    <circle class="gate-marker" cx="250" cy="80" r="10"/>
+    <text class="gate-label" x="250" y="80">45</text>
 </g>
 <g id="zone-9" class="zone">
     <circle class="zone-circle" cx="280" cy="100" r="36"/>
@@ -296,7 +296,7 @@ SOURCE: CCRU Writings 1997-2003, Time Spiral Press 2015, Part-8.
     <circle class="zone-circle" cx="410" cy="730" r="36"/>
     <text class="zone-label" x="410" y="730">3</text>
 </g>
-<g id="legend" transform="translate(555, 55)">
+<g id="legend" transform="translate(655, 55)">
     <rect x="0" y="0" width="155" height="150" 
           fill="rgba(5,10,5,0.9)" 
           stroke="var(--border-color, #007733)" 
