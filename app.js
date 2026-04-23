@@ -710,13 +710,13 @@ function renderCurrentPage() {
             // Generate animated popup at cursor
             const popup = document.createElement('div');
             popup.className = 'sigil-popup';
-            popup.textContent = 'Sigil generated above';
+            popup.innerHTML = '<span>sigil generated above</span>';
             popup.style.left = e.clientX + 'px';
             popup.style.top = e.clientY + 'px';
             document.body.appendChild(popup);
             
             // Remove after animation completes
-            setTimeout(() => popup.remove(), 1500);
+            setTimeout(() => popup.remove(), 2000);
         });
 
         const metaSpan = document.createElement('span');
