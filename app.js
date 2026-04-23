@@ -594,6 +594,14 @@ function displayResults(results, inputText, inputAQ) {
     const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
     const imps = Math.pow(2, root) - 1;
     
+    const timeCircuit = [1, 2, 4, 8, 7, 5];
+    const circuitIndex = timeCircuit.indexOf(root);
+    let timeCircuitFlow = "Off-Circuit (Plex / Pole)";
+    if (circuitIndex !== -1) {
+        const nextNode = timeCircuit[(circuitIndex + 1) % timeCircuit.length];
+        timeCircuitFlow = `${root} &rarr; ${nextNode}`;
+    }
+    
     const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
     const showVerses = activeTab === 'text-search' || activeTab === 'number-search';
     
@@ -609,7 +617,7 @@ function displayResults(results, inputText, inputAQ) {
         <div class="ccru-metadata" style="margin-top: 0;">
             <p><strong>AQ Value:</strong> ${inputAQ}</p>
             <p><strong>Pandemonium:</strong> ${numogramDemon} &middot; <strong>${imps} Imps</strong></p>
-            <p><strong>Syzygy Twin:</strong> ${syzygy}</p>
+            <p><strong>Syzygy Twin:</strong> ${syzygy} &middot; <strong>Time-Circuit Flow:</strong> ${timeCircuitFlow}</p>
             
             <div style="display: flex; gap: 20px; align-items: center; margin: 15px 0; justify-content: center; flex-wrap: wrap;">
                 <div style="flex: 1; min-width: 250px; text-align: center;">
