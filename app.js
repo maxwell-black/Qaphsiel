@@ -303,7 +303,7 @@ function findLexicalTwins(targetAQ) {
 function generateNumogramSVG(inputAQ) {
     const containerId = 'numogram-' + Math.random().toString(36).slice(2, 10);
     setTimeout(() => highlightNumogram(containerId, inputAQ), 0);
-    return `<div id="${containerId}" class="numogram-container" style="max-width: 900px; margin: 0 auto;">${numogramSvgText}</div>`;
+    return `<div id="${containerId}" class="numogram-container" style="max-width: 720px; margin: 0 auto; background: black; border-radius: 8px;">${numogramSvgText}</div>`;
 }
 
 function highlightNumogram(containerId, inputAQ) {
@@ -661,8 +661,9 @@ function displayResults(results, inputText, inputAQ) {
             <p><strong>Mesh-Tag:</strong> ${getMeshTag(inputAQ)} &middot; <strong>Door:</strong> ${getDoor(inputAQ) || 'None (Zone 0)'}</p>
             <p><strong>Tractor Current:</strong> ${getTractorCurrent(inputAQ) || 'Non-tractor zone'}</p>
             
-            <div style="position: relative; margin: 15px 0; min-height: 600px;">
+            <div style="position: relative; margin: 15px 0; min-height: 500px;">
                 <div style="width: 100%; text-align: center;">
+                    <p style="margin: 0 0 8px 0; font-weight: bold; letter-spacing: 4px; color: var(--primary-color); font-family: 'Courier New', monospace; font-size: 1.1rem;">NUMOGRAM</p>
                     ${generateNumogramSVG(inputAQ)}
                 </div>
                 <div style="position: absolute; bottom: 10px; right: 10px; text-align: center; background: rgba(0,0,0,0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-width: 140px;">
