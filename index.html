@@ -26,8 +26,8 @@
                 <div class="search-tabs">
                     <button class="tab-btn active" data-tab="text-search">Text Search</button>
                     <button class="tab-btn" data-tab="number-search">Number Search</button>
-                    <button class="tab-btn" data-tab="chronomancy">Chronomancy</button>
                     <button class="tab-btn" data-tab="sigil-generator">Sigil Generator</button>
+                    <button class="tab-btn" data-tab="xenotation">Xenotation</button>
                 </div>
 
                 <div class="tab-content active" id="text-search">
@@ -50,16 +50,6 @@
                     </div>
                 </div>
 
-                <div class="tab-content" id="chronomancy">
-                    <div class="form-group">
-                        <label for="chronoInput">Temporal Divination (Input Year):</label>
-                        <div class="input-action">
-                            <input type="number" id="chronoInput" placeholder="e.g. 1999" />
-                            <button type="button" id="chronoSearchButton" class="btn primary">Time Traverse</button>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="tab-content" id="sigil-generator">
                     <div class="sigil-panel">
                         <div class="form-group">
@@ -71,6 +61,16 @@
                             <svg id="aqSquareSvg" width="240" height="240"></svg>
                         </div>
                         <p class="sigil-help">The sigil is traced on a 6x6 alphanumeric grid (0-9, A-Z).</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="xenotation">
+                    <div class="form-group">
+                        <label for="xenoInput">Reverse Xenotation (Input TX, e.g. ((•))(•)):</label>
+                        <div class="input-action">
+                            <input type="text" id="xenoInput" placeholder="Use • or : and ()" />
+                            <button type="button" id="xenoSearchButton" class="btn primary">Compile & Search</button>
+                        </div>
                     </div>
                 </div>
 
@@ -92,6 +92,12 @@
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
                                 <input type="checkbox" id="oedipusFilter" style="flex: none; width: auto;" />
                                 Enable Oedipus/Meat Subtraction (Strips humanistic/divine stop-words)
+                            </label>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
+                                <input type="checkbox" id="hyperprimeFilter" style="flex: none; width: auto;" />
+                                Enable Hyperprime Resonance (Barker Filter)
                             </label>
                         </div>
                     </div>

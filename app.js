@@ -159,6 +159,18 @@ function getPrimeIndex(p) {
     return primesList.indexOf(p) + 1;
 }
 
+function getNthPrime(n) {
+    if (n < 1) return 0;
+    let currentPrime = primesList[primesList.length - 1];
+    while (primesList.length < n) {
+        currentPrime++;
+        if (isPrime(currentPrime)) {
+            primesList.push(currentPrime);
+        }
+    }
+    return primesList[n - 1];
+}
+
 function primeFactorization(n) {
     if (n <= 1) return [];
     let factors = [];
@@ -193,6 +205,64 @@ function xenotate(n) {
     return result;
 }
 
+function unxenotate(str) {
+    if (!str) return 1;
+    let factors = [];
+    let depth = 0;
+    let current = '';
+    for (let i = 0; i < str.length; i++) {
+        let char = str[i];
+        if (char === '(') {
+            depth++;
+            current += char;
+        } else if (char === ')') {
+            depth--;
+            current += char;
+            if (depth === 0) {
+                factors.push(current);
+                current = '';
+            }
+        } else if (char === '•' || char === ':' || char === '.') {
+            if (depth === 0) {
+                factors.push(char);
+            } else {
+                current += char;
+            }
+        } else if (char === ' ') {
+            continue;
+        } else {
+            if (depth > 0) current += char;
+        }
+    }
+    
+    let product = 1;
+    factors.forEach(f => {
+        if (f === '•' || f === ':' || f === '.') {
+            product *= 2;
+        } else if (f.startsWith('(') && f.endsWith(')')) {
+            let inner = f.substring(1, f.length - 1);
+            let innerVal = unxenotate(inner);
+            product *= getNthPrime(innerVal);
+        }
+    });
+    return product;
+}
+
+function getHyperprimeResonances(targetAQ) {
+    let targets = [targetAQ];
+    if (targetAQ > 0) {
+        if (targetAQ < 1000) { 
+            let nth = getNthPrime(targetAQ);
+            if (nth) targets.push(nth);
+        }
+        if (isPrime(targetAQ)) {
+            let idx = getPrimeIndex(targetAQ);
+            targets.push(idx);
+        }
+    }
+    return targets;
+}
+
 function findLexicalTwins(targetAQ) {
     const twins = new Set();
     words.forEach(w => {
@@ -201,12 +271,74 @@ function findLexicalTwins(targetAQ) {
         }
     });
     const arr = Array.from(twins);
-    // Shuffle slightly for hyperstitional noise
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr.slice(0, 15);
+}
+
+function generateNumogramSVG(inputAQ) {
+    const root = digitalRoot(inputAQ);
+    const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
+    
+    let nodes = [];
+    const cx = 150, cy = 150, r = 110;
+    for (let i = 0; i < 10; i++) {
+        let angle = (i * Math.PI * 2) / 10 - Math.PI / 2;
+        nodes.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+    }
+    
+    let svg = `<svg viewBox="0 0 300 300" width="100%" height="200" style="max-width: 250px; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 0.5rem auto; display: block;">`;
+    
+    const syzygies = [[0,9], [1,8], [2,7], [3,6], [4,5]];
+    syzygies.forEach(pair => {
+        let n1 = nodes[pair[0]], n2 = nodes[pair[1]];
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="var(--border-color)" stroke-width="1"/>`;
+    });
+    
+    const timeCircuit = [1, 2, 4, 8, 7, 5];
+    for (let i=0; i<timeCircuit.length; i++) {
+        let n1 = nodes[timeCircuit[i]];
+        let n2 = nodes[timeCircuit[(i+1)%timeCircuit.length]];
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4,4"/>`;
+    }
+    
+    let h1 = nodes[root], h2 = nodes[syzygy];
+    svg += `<line x1="${h1.x}" y1="${h1.y}" x2="${h2.x}" y2="${h2.y}" stroke="var(--primary-color)" stroke-width="3"/>`;
+    
+    for (let i = 0; i < 10; i++) {
+        let isRoot = i === root;
+        let isSyz = i === syzygy;
+        let fill = isRoot ? 'var(--primary-color)' : (isSyz ? 'var(--primary-hover)' : '#111');
+        let stroke = (isRoot || isSyz) ? 'var(--primary-color)' : 'var(--text-muted)';
+        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="14" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 5}" fill="${isRoot ? '#000' : 'var(--text-light)'}" font-size="14" text-anchor="middle" font-family="monospace">${i}</text>`;
+    }
+    
+    svg += `</svg>`;
+    return svg;
+}
+
+function generateHexagramSVG(inputAQ) {
+    if (inputAQ === 0) return '';
+    const mod = inputAQ % 64;
+    const index = mod === 0 ? 63 : mod - 1;
+    let bin = index.toString(2).padStart(6, '0');
+    
+    let svg = `<svg viewBox="0 0 100 120" width="80" height="100" style="margin: auto; display: block;">`;
+    for(let i=0; i<6; i++) {
+        let bit = bin[i];
+        let y = 10 + i * 16;
+        if (bit === '1') {
+            svg += `<rect x="10" y="${y}" width="80" height="8" fill="var(--primary-color)"/>`;
+        } else {
+            svg += `<rect x="10" y="${y}" width="35" height="8" fill="var(--primary-color)"/>`;
+            svg += `<rect x="55" y="${y}" width="35" height="8" fill="var(--primary-color)"/>`;
+        }
+    }
+    svg += `</svg>`;
+    return svg;
 }
 
 function parseVerseRef(line) {
@@ -460,19 +592,40 @@ function displayResults(results, inputText, inputAQ) {
     const lexicalTwins = findLexicalTwins(inputAQ).join(', ');
     const root = digitalRoot(inputAQ);
     const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
+    const imps = Math.pow(2, root) - 1;
+    
+    const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
+    const showVerses = activeTab === 'text-search' || activeTab === 'number-search';
+    
+    let foundText = '';
+    if (showVerses) {
+        foundText = `<p>Found <strong>${totalPhrases}</strong> unique phrase${totalPhrases !== 1 ? 's' : ''} across <strong>${totalOccurrences}</strong> occurrence${totalOccurrences !== 1 ? 's' : ''}.</p>`;
+    }
     
     statsDiv.innerHTML = `
         <h3 style="margin-bottom: 10px; color: var(--primary-color);">Search Results for "${inputText}"</h3>
         
         <div class="ccru-metadata">
             <p><strong>AQ Value:</strong> ${inputAQ}</p>
-            <p><strong>Numogram Entity:</strong> ${numogramDemon} &middot; <strong>Syzygy:</strong> ${syzygy}</p>
-            <p><strong>I Ching Hexagram:</strong> ${hexagram}</p>
+            <p><strong>Pandemonium:</strong> ${numogramDemon} &middot; <strong>${imps} Imps</strong></p>
+            <p><strong>Syzygy Twin:</strong> ${syzygy}</p>
+            
+            <div style="display: flex; gap: 20px; align-items: center; margin: 15px 0; justify-content: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 250px; text-align: center;">
+                    <p style="margin-bottom: 5px;"><strong>Numogram Matrix</strong></p>
+                    ${generateNumogramSVG(inputAQ)}
+                </div>
+                <div style="flex: 1; min-width: 200px; text-align: center;">
+                    <p style="margin-bottom: 5px;"><strong>I Ching Hexagram:</strong> ${hexagram}</p>
+                    ${generateHexagramSVG(inputAQ)}
+                </div>
+            </div>
+
             <p><strong>Xenotation:</strong> <span class="xenotation">${xenotationStr}</span></p>
             <p><strong>Lexical Twins:</strong> <span style="color: var(--text-muted);">${lexicalTwins || 'None found'}</span></p>
         </div>
 
-        <p>Found <strong>${totalPhrases}</strong> unique phrase${totalPhrases !== 1 ? 's' : ''} across <strong>${totalOccurrences}</strong> occurrence${totalOccurrences !== 1 ? 's' : ''}.</p>
+        ${foundText}
     `;
 
     renderCurrentPage();
@@ -483,6 +636,20 @@ function renderCurrentPage() {
     const paginationTopDiv = document.getElementById('paginationTop');
     const paginationBottomDiv = document.getElementById('paginationBottom');
     
+    const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
+    const showVerses = activeTab === 'text-search' || activeTab === 'number-search';
+
+    if (!showVerses) {
+        paginationTopDiv.style.display = 'none';
+        paginationBottomDiv.style.display = 'none';
+        if (currentGroupedResults.length === 0) {
+            resultsDiv.innerHTML = '<div class="result-item"><p style="text-align:center; color: var(--text-muted);">No phrases found with this value.</p></div>';
+        } else {
+            resultsDiv.innerHTML = '<div class="result-item"><p style="text-align:center; color: var(--text-muted);">Bible exposition is hidden in this esoteric mode.</p></div>';
+        }
+        return;
+    }
+
     const totalPages = Math.ceil(currentGroupedResults.length / RESULTS_PER_PAGE);
     const startIdx = (currentPage - 1) * RESULTS_PER_PAGE;
     const endIdx = Math.min(startIdx + RESULTS_PER_PAGE, currentGroupedResults.length);
@@ -599,17 +766,32 @@ function goToPage(page) {
     document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function execSearchQuery(inputAQ, inputText) {
+    const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
+    const phraseScope = document.getElementById('phraseScope').value;
+    
+    let targetAQs = [inputAQ];
+    const useHyperprime = document.getElementById('hyperprimeFilter') && document.getElementById('hyperprimeFilter').checked;
+    if (useHyperprime) {
+        targetAQs = getHyperprimeResonances(inputAQ);
+    }
+    
+    let allResults = [];
+    targetAQs.forEach(tAQ => {
+        let res = searchAQ(tAQ, maxWords, phraseScope);
+        allResults = allResults.concat(res);
+    });
+    
+    displayResults(allResults, inputText, inputAQ);
+}
+
 function handleSearch() {
     if (!isLoaded) return alert('Bible text is still loading.');
     const inputText = document.getElementById('searchInput').value.trim();
     if (!inputText) return alert('Please enter text to search.');
     
-    const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
-    const phraseScope = document.getElementById('phraseScope').value;
     const inputAQ = calculateStringAQ(inputText);
-    
-    const results = searchAQ(inputAQ, maxWords, phraseScope);
-    displayResults(results, inputText, inputAQ);
+    execSearchQuery(inputAQ, inputText);
 }
 
 function handleNumericSearch() {
@@ -618,11 +800,7 @@ function handleNumericSearch() {
     if (!numericInput || !/^\d+$/.test(numericInput)) return alert('Please enter a valid positive number.');
     
     const inputAQ = parseInt(numericInput, 10);
-    const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
-    const phraseScope = document.getElementById('phraseScope').value;
-    
-    const results = searchAQ(inputAQ, maxWords, phraseScope);
-    displayResults(results, `AQ ${numericInput}`, inputAQ);
+    execSearchQuery(inputAQ, `AQ ${numericInput}`);
 }
 
 function handleChronomancy() {
@@ -631,11 +809,22 @@ function handleChronomancy() {
     if (!year || !/^\d+$/.test(year)) return alert('Please enter a valid year.');
     
     const inputAQ = parseInt(year, 10);
-    const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
-    const phraseScope = document.getElementById('phraseScope').value;
+    execSearchQuery(inputAQ, `Temporal Index ${year}`);
+}
+
+function handleXenotationSearch() {
+    if (!isLoaded) return alert('Bible text is still loading.');
+    const xenoInput = document.getElementById('xenoInput').value.trim();
+    if (!xenoInput) return alert('Please enter a Xenotation string.');
     
-    const results = searchAQ(inputAQ, maxWords, phraseScope);
-    displayResults(results, `Temporal Index ${year}`, inputAQ);
+    try {
+        const inputAQ = unxenotate(xenoInput);
+        if (inputAQ === null || isNaN(inputAQ) || inputAQ < 0) throw new Error("Invalid");
+        
+        execSearchQuery(inputAQ, `TX: ${xenoInput}`);
+    } catch(e) {
+        alert('Could not parse Xenotation. Ensure you use only •, :, (, and )');
+    }
 }
 
 // Tabs
@@ -784,8 +973,8 @@ document.getElementById('searchInput').addEventListener('keypress', (e) => { if 
 document.getElementById('numericSearchButton').addEventListener('click', handleNumericSearch);
 document.getElementById('numericInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleNumericSearch(); });
 
-document.getElementById('chronoSearchButton').addEventListener('click', handleChronomancy);
-document.getElementById('chronoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleChronomancy(); });
+document.getElementById('xenoSearchButton').addEventListener('click', handleXenotationSearch);
+document.getElementById('xenoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleXenotationSearch(); });
 
 document.getElementById('oedipusFilter').addEventListener('change', () => {
     if (kjvText) parseBible();
