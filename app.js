@@ -298,10 +298,20 @@ function generateNumogramSVG(inputAQ) {
     });
     
     const timeCircuit = [1, 2, 4, 8, 7, 5];
+    const circuitIndex = timeCircuit.indexOf(root);
+    let nextNode = -1;
+    if (circuitIndex !== -1) {
+        nextNode = timeCircuit[(circuitIndex + 1) % timeCircuit.length];
+    }
+
     for (let i=0; i<timeCircuit.length; i++) {
         let n1 = nodes[timeCircuit[i]];
         let n2 = nodes[timeCircuit[(i+1)%timeCircuit.length]];
-        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4,4"/>`;
+        let isFlow = timeCircuit[i] === root;
+        let strokeColor = isFlow ? 'var(--primary-hover)' : 'var(--border-color)';
+        let strokeWidth = isFlow ? '2.5' : '1';
+        let dash = isFlow ? 'none' : '4,4';
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
     }
     
     let h1 = nodes[root], h2 = nodes[syzygy];
@@ -310,10 +320,18 @@ function generateNumogramSVG(inputAQ) {
     for (let i = 0; i < 10; i++) {
         let isRoot = i === root;
         let isSyz = i === syzygy;
-        let fill = isRoot ? 'var(--primary-color)' : (isSyz ? 'var(--primary-hover)' : '#111');
-        let stroke = (isRoot || isSyz) ? 'var(--primary-color)' : 'var(--text-muted)';
+        let isNextFlow = i === nextNode;
+        
+        let fill = '#111';
+        if (isRoot) fill = 'var(--primary-color)';
+        else if (isSyz) fill = 'var(--primary-hover)';
+        else if (isNextFlow) fill = 'rgba(0, 255, 65, 0.2)';
+        
+        let stroke = (isRoot || isSyz || isNextFlow) ? 'var(--primary-color)' : 'var(--text-muted)';
         svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="14" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
-        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 5}" fill="${isRoot ? '#000' : 'var(--text-light)'}" font-size="14" text-anchor="middle" font-family="monospace">${i}</text>`;
+        
+        let textFill = isRoot ? '#000' : (isSyz || isNextFlow ? 'var(--primary-color)' : 'var(--text-light)');
+        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 5}" fill="${textFill}" font-size="14" text-anchor="middle" font-family="monospace">${i}</text>`;
     }
     
     svg += `</svg>`;
