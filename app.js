@@ -599,13 +599,14 @@ function displayResults(results, inputText, inputAQ) {
     
     let foundText = '';
     if (showVerses) {
-        foundText = `<p>Found <strong>${totalPhrases}</strong> unique phrase${totalPhrases !== 1 ? 's' : ''} across <strong>${totalOccurrences}</strong> occurrence${totalOccurrences !== 1 ? 's' : ''}.</p>`;
+        foundText = `
+        <div class="ccru-metadata" style="text-align: center; padding: 0.5rem; margin-top: 0;">
+            <p style="margin: 0;">Found <strong>${totalPhrases}</strong> unique phrase${totalPhrases !== 1 ? 's' : ''} across <strong>${totalOccurrences}</strong> occurrence${totalOccurrences !== 1 ? 's' : ''}.</p>
+        </div>`;
     }
     
     statsDiv.innerHTML = `
-        <h3 style="margin-bottom: 10px; color: var(--primary-color);">Search Results for "${inputText}"</h3>
-        
-        <div class="ccru-metadata">
+        <div class="ccru-metadata" style="margin-top: 0;">
             <p><strong>AQ Value:</strong> ${inputAQ}</p>
             <p><strong>Pandemonium:</strong> ${numogramDemon} &middot; <strong>${imps} Imps</strong></p>
             <p><strong>Syzygy Twin:</strong> ${syzygy}</p>
@@ -624,7 +625,6 @@ function displayResults(results, inputText, inputAQ) {
             <p><strong>Xenotation:</strong> <span class="xenotation">${xenotationStr}</span></p>
             <p><strong>Lexical Twins:</strong> <span style="color: var(--text-muted);">${lexicalTwins || 'None found'}</span></p>
         </div>
-
         ${foundText}
     `;
 
@@ -699,13 +699,24 @@ function renderCurrentPage() {
         phraseTitle.className = 'phrase-text';
         phraseTitle.textContent = `"${group.text}"`;
         phraseTitle.title = "Click to generate sigil";
-        phraseTitle.addEventListener('click', () => {
+        phraseTitle.addEventListener('click', (e) => {
             switchTab('sigil-generator');
             const aqInput = document.getElementById('aqSquareInput');
             if (aqInput) {
                 aqInput.value = group.text;
                 updateAqSquareSigil();
             }
+            
+            // Generate animated popup at cursor
+            const popup = document.createElement('div');
+            popup.className = 'sigil-popup';
+            popup.textContent = 'Sigil generated above';
+            popup.style.left = e.clientX + 'px';
+            popup.style.top = e.clientY + 'px';
+            document.body.appendChild(popup);
+            
+            // Remove after animation completes
+            setTimeout(() => popup.remove(), 1500);
         });
 
         const metaSpan = document.createElement('span');

@@ -31,13 +31,42 @@
                 </div>
 
                 <div class="tab-content active" id="text-search">
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label for="searchInput">Enter Text to Calculate & Search:</label>
                         <div class="input-action">
                             <input type="text" id="searchInput" placeholder="e.g. In the beginning..." />
                             <button type="button" id="searchButton" class="btn primary">Search</button>
                         </div>
                     </div>
+
+                    <details class="advanced-options">
+                        <summary>Advanced Search Options</summary>
+                        <div class="options-grid">
+                            <div class="form-group">
+                                <label for="maxWords">Max phrase length:</label>
+                                <input type="number" id="maxWords" value="10" min="1" max="50" />
+                            </div>
+                            <div class="form-group">
+                                <label for="phraseScope">Phrase scope:</label>
+                                <select id="phraseScope">
+                                    <option value="within" selected>Within verse only</option>
+                                    <option value="cross">Allow crossing verses</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
+                                    <input type="checkbox" id="oedipusFilter" style="flex: none; width: auto;" />
+                                    Enable Oedipus/Meat Subtraction (Strips humanistic/divine stop-words)
+                                </label>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
+                                    <input type="checkbox" id="hyperprimeFilter" style="flex: none; width: auto;" />
+                                    Enable Hyperprime Resonance (Barker Filter)
+                                </label>
+                            </div>
+                        </div>
+                    </details>
                 </div>
 
                 <div class="tab-content" id="number-search">
@@ -73,39 +102,10 @@
                         </div>
                     </div>
                 </div>
-
-                <details class="advanced-options">
-                    <summary>Advanced Search Options</summary>
-                    <div class="options-grid">
-                        <div class="form-group">
-                            <label for="maxWords">Max phrase length:</label>
-                            <input type="number" id="maxWords" value="10" min="1" max="50" />
-                        </div>
-                        <div class="form-group">
-                            <label for="phraseScope">Phrase scope:</label>
-                            <select id="phraseScope">
-                                <option value="within" selected>Within verse only</option>
-                                <option value="cross">Allow crossing verses</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
-                                <input type="checkbox" id="oedipusFilter" style="flex: none; width: auto;" />
-                                Enable Oedipus/Meat Subtraction (Strips humanistic/divine stop-words)
-                            </label>
-                        </div>
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--primary-hover);">
-                                <input type="checkbox" id="hyperprimeFilter" style="flex: none; width: auto;" />
-                                Enable Hyperprime Resonance (Barker Filter)
-                            </label>
-                        </div>
-                    </div>
-                </details>
             </section>
 
             <section id="resultsSection" class="results-section" style="display: none;">
-                <div id="stats" class="stats-card"></div>
+                <div id="stats"></div>
 
                 <div id="paginationTop" class="pagination">
                     <button id="prevPage" class="btn outline" disabled>← Previous</button>
