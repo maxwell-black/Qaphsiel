@@ -4,7 +4,6 @@ let cumsum = [];
 let cumsumMap = new Map();
 let isLoaded = false;
 let kjvText = '';
-let numogramSvgText = '';
 
 // Pagination state
 const RESULTS_PER_PAGE = 10;
@@ -302,54 +301,16 @@ function findLexicalTwins(targetAQ) {
 
 function generateNumogramSVG(inputAQ) {
     const containerId = 'numogram-' + Math.random().toString(36).slice(2, 10);
-    setTimeout(() => highlightNumogram(containerId, inputAQ), 0);
-    return `<div id="${containerId}" class="numogram-container" style="max-width: 820px; margin: 0 auto; background: black; border-radius: 8px;">${numogramSvgText}</div>`;
-}
-
-function highlightNumogram(containerId, inputAQ) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    const svg = container.querySelector('svg.numogram');
-    if (!svg) return;
-    
-    clearHighlight(svg);
-    
-    const root = digitalRoot(inputAQ);
-    const twin = (root === 0) ? 9 : (root === 9) ? 0 : (9 - root);
-    
-    svg.classList.add('highlighting');
-    
-    // Active zone
-    svg.querySelector(`#zone-${root}`)?.classList.add('active');
-    
-    // Syzygy twin
-    svg.querySelector(`#zone-${twin}`)?.classList.add('syzygy-active');
-    const [a, b] = [Math.min(root, twin), Math.max(root, twin)];
-    svg.querySelector(`#syz-${a}-${b}`)?.classList.add('active');
-    
-    // Tractor current (if root is a tractor zone)
-    const tractorCurrents = {1:'sink', 3:'warp', 5:'hold', 7:'surge', 9:'plex'};
-    if (tractorCurrents[root]) {
-        svg.querySelector(`#current-${tractorCurrents[root]}`)?.classList.add('active');
-    }
-    
-    // Time-circuit next step
-    const doubling = {1:2, 2:4, 4:8, 8:7, 7:5, 5:1};
-    if (doubling[root]) {
-        const next = doubling[root];
-        svg.querySelector(`#zone-${next}`)?.classList.add('flow-active');
-    }
-    
-    // Gate
-    const gateNums = {0:'00', 1:'01', 2:'03', 3:'06', 4:'10', 5:'15', 6:'21', 7:'28', 8:'36', 9:'45'};
-    svg.querySelector(`#gate-${gateNums[root]}`)?.classList.add('active');
-}
-
-function clearHighlight(svg) {
-    svg.classList.remove('highlighting');
-    svg.querySelectorAll('.active, .syzygy-active, .flow-active').forEach(el => {
-        el.classList.remove('active', 'syzygy-active', 'flow-active');
-    });
+    setTimeout(() => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '<svg id="numogram-svg" viewBox="0 0 520 560" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numogram zone relations"></svg>';
+        const zone = digitalRoot(inputAQ);
+        if (typeof window.renderZone === 'function') {
+            window.renderZone(zone);
+        }
+    }, 0);
+    return `<div id="${containerId}" class="numogram-container" style="max-width: 520px; margin: 0 auto;"></div>`;
 }
 
 function generateHexagramSVG(inputAQ) {
@@ -456,13 +417,9 @@ function parseBible() {
 
 async function loadBible() {
     try {
-        const [bibleResp, svgText] = await Promise.all([
-            fetch('kjv.txt'),
-            fetch('numogram.svg').then(r => r.ok ? r.text() : Promise.reject('svg fetch failed'))
-        ]);
+        const bibleResp = await fetch('kjv.txt');
         if (!bibleResp.ok) throw new Error('Failed to fetch kjv.txt');
         kjvText = await bibleResp.text();
-        numogramSvgText = svgText;
         parseBible();
 
         isLoaded = true;

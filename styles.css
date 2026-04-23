@@ -542,3 +542,11 @@ footer {
     80% { opacity: 1; transform: translate(15px, 15px); }
     100% { opacity: 0; transform: translate(15px, 15px); }
 }
+
+/* Numogram zone hover — reinforces that zones are clickable */
+.zone {
+    transition: stroke-width 0.15s ease;
+}
+.zone:hover {
+    stroke-width: 2.5 !important;
+}
