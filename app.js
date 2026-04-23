@@ -146,11 +146,14 @@ function isPrime(n) {
     return true;
 }
 
-const primesList = [];
+const primesList = [2];
 function getPrimeIndex(p) {
-    if (primesList.length === 0) {
-        for (let i = 2; i < 10000; i++) {
-            if (isPrime(i)) primesList.push(i);
+    if (p < 2) return 0;
+    let currentPrime = primesList[primesList.length - 1];
+    while (currentPrime < p) {
+        currentPrime++;
+        if (isPrime(currentPrime)) {
+            primesList.push(currentPrime);
         }
     }
     return primesList.indexOf(p) + 1;
@@ -173,18 +176,21 @@ function primeFactorization(n) {
 
 function xenotate(n) {
     if (n === 0) return '0';
-    if (n === 1) return '(.)';
+    if (n === 1) return '';
+    if (n === 2) return '•';
+    
+    if (isPrime(n)) {
+        const idx = getPrimeIndex(n);
+        return '(' + xenotate(idx) + ')';
+    }
+    
     const factors = primeFactorization(n);
+    factors.sort((a, b) => b - a);
     let result = '';
     factors.forEach(f => {
-        const idx = getPrimeIndex(f);
-        if (idx > 0) {
-            let brackets = '.';
-            for (let i = 0; i < idx; i++) brackets = `(${brackets})`;
-            result += brackets;
-        }
+        result += xenotate(f);
     });
-    return result || '(.)';
+    return result;
 }
 
 function findLexicalTwins(targetAQ) {
