@@ -310,7 +310,7 @@ function generateNumogramSVG(inputAQ) {
         let isFlow = timeCircuit[i] === root;
         let strokeColor = isFlow ? 'var(--primary-hover)' : 'var(--border-color)';
         let strokeWidth = isFlow ? '2.5' : '1';
-        let dash = isFlow ? 'none' : '4,4';
+        let dash = isFlow ? '6,4' : '4,4';
         svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
     }
     
@@ -327,11 +327,11 @@ function generateNumogramSVG(inputAQ) {
         else if (isSyz) fill = 'var(--primary-hover)';
         else if (isNextFlow) fill = 'rgba(0, 255, 65, 0.2)';
         
-        let stroke = (isRoot || isSyz || isNextFlow) ? 'var(--primary-color)' : 'var(--text-muted)';
-        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="14" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+        let stroke = (isRoot || isSyz || isNextFlow) ? 'var(--primary-color)' : 'var(--text-main)';
+        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="15" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
         
-        let textFill = isRoot ? '#000' : (isSyz || isNextFlow ? 'var(--primary-color)' : 'var(--text-light)');
-        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 5}" fill="${textFill}" font-size="14" text-anchor="middle" font-family="monospace">${i}</text>`;
+        let textFill = (isRoot || isSyz) ? '#000' : 'var(--primary-color)';
+        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 6}" fill="${textFill}" font-size="16" font-weight="bold" text-anchor="middle" font-family="monospace">${i}</text>`;
     }
     
     svg += `</svg>`;
