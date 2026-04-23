@@ -14,9 +14,16 @@ The tool strips the text of its theological meaning, treating it instead as an a
 *   **I Ching Transcompiler:** Maps AQ values to the 64 Hexagrams of the I Ching, visualizing the Yin/Yang lines as binary logic gates plotted into Lemurian time sorcery.
 *   **Sigil Generator:** Maps a word across a 6x6 alphanumeric grid and draws an SVG sigil path based on its character values. Includes a dynamic cursor-fade popup.
 
-## Running the Application
+## Accessing the Application
 
-Due to browser security restrictions loading local files (`kjv.txt`), you must run a local web server. 
+Qaphsiel is hosted live and is available to use right now at:
+**[http://qaphsiel.com](http://qaphsiel.com)**
+
+Simply open the link in your browser, wait a few seconds for the underlying `kjv.txt` Holy Text to load into your browser's memory, and then input text, numbers, or Xenotation strings to begin mapping the matrix.
+
+## Local Development
+
+If you wish to run the app locally or modify the code, you must use a local web server (due to browser security restrictions when loading local `.txt` files).
 
 ### Option 1: Python (Recommended)
 
@@ -33,9 +40,3 @@ Then open your browser and go to: `http://localhost:8000`
 npx http-server -p 8000
 ```
 Then open: `http://localhost:8000`
-
-## Usage
-1. Start the local server.
-2. Open `http://localhost:8000`.
-3. Wait for the `kjv.txt` Holy Text to load into memory.
-4. Input text, numbers, or Xenotation strings to begin mapping the matrix.
