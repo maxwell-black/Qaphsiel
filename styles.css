@@ -538,9 +538,8 @@ footer {
 }
 
 @keyframes popForward {
-    0% { opacity: 0; transform: translate(15px, 15px) scale(0.5); filter: hue-rotate(-90deg); }
-    15% { opacity: 1; transform: translate(15px, 15px) scale(1.1); filter: hue-rotate(90deg); }
-    30% { opacity: 1; transform: translate(15px, 15px) scale(1); filter: hue-rotate(0deg); }
-    80% { opacity: 1; transform: translate(15px, -15px) scale(1); filter: hue-rotate(0deg); }
-    100% { opacity: 0; transform: translate(15px, -35px) scale(0.9); filter: hue-rotate(0deg); }
+    0% { opacity: 0; transform: translate(15px, 15px); filter: hue-rotate(-90deg); }
+    15% { opacity: 1; transform: translate(15px, 15px); filter: hue-rotate(0deg); }
+    80% { opacity: 1; transform: translate(15px, 15px); filter: hue-rotate(0deg); }
+    100% { opacity: 0; transform: translate(15px, 15px); filter: hue-rotate(0deg); }
 }
