@@ -4,6 +4,7 @@ let cumsum = [];
 let cumsumMap = new Map();
 let isLoaded = false;
 let kjvText = '';
+let numogramSvgText = '';
 
 // Pagination state
 const RESULTS_PER_PAGE = 10;
@@ -97,17 +98,18 @@ function isTriangular(n) {
 // CCRU Esoteric Math Functions
 function getNumogramDemon(n) {
     const root = digitalRoot(n);
+    // Five CCRU syzygetic demons, each associated with both zones of its syzygy
     const demons = {
-        0: "Znözz (Zone 0)",
-        1: "Uttunul (Zone 1)",
-        2: "Katak (Zone 2)",
-        3: "Murrumur (Zone 3)",
-        4: "Oddubb (Zone 4)",
-        5: "Krpel (Zone 5)",
-        6: "Tchk (Zone 6)",
-        7: "Bubb (Zone 7)",
-        8: "Mummu (Zone 8)",
-        9: "Djynxx (Zone 9)"
+        0: "Uttunul (Zone 0)",   // 9::0 Plex
+        1: "Murmur (Zone 1)",    // 8::1 Surge
+        2: "Oddubb (Zone 2)",    // 7::2
+        3: "Djynxx (Zone 3)",    // 6::3 Warp
+        4: "Katak (Zone 4)",     // 5::4 Sink
+        5: "Katak (Zone 5)",
+        6: "Djynxx (Zone 6)",
+        7: "Oddubb (Zone 7)",
+        8: "Murmur (Zone 8)",
+        9: "Uttunul (Zone 9)"
     };
     return demons[root] || "Unknown";
 }
@@ -130,6 +132,26 @@ const HEXAGRAMS = [
     "57. 巽 (Ground)", "58. 兌 (Open)", "59. 渙 (Dispersion)", "60. 節 (Articulating)",
     "61. 中孚 (Inner Truth)", "62. 小過 (Small Exceeding)", "63. 既濟 (Already Fording)", "64. 未濟 (Not Yet Fording)"
 ];
+
+
+function getMeshTag(n) {
+    const root = digitalRoot(n);
+    return root === 0 ? "0000" : (Math.pow(2, root) - 1).toString().padStart(4, '0');
+}
+
+function getDoor(n) {
+    const doors = {
+        1: "Lurgo (1::0)",    2: "Duoddod (2::0)",  3: "Ixix (3::0)",
+        4: "Krako (4::0)",    5: "Tokhatto (5::0)", 6: "Tchu (6::0)",
+        7: "Puppo (7::0)",    8: "Minommo (8::0)",  9: "Uttunul (9::0)"
+    };
+    return doors[digitalRoot(n)] || null;
+}
+
+function getTractorCurrent(n) {
+    const currents = {1:'Sink', 3:'Warp', 5:'Hold', 7:'Surge', 9:'Plex'};
+    return currents[digitalRoot(n)] || null;
+}
 
 function getHexagram(n) {
     if (n === 0) return "None";
@@ -279,103 +301,55 @@ function findLexicalTwins(targetAQ) {
 }
 
 function generateNumogramSVG(inputAQ) {
+    const containerId = 'numogram-' + Math.random().toString(36).slice(2, 10);
+    setTimeout(() => highlightNumogram(containerId, inputAQ), 0);
+    return `<div id="${containerId}" class="numogram-container" style="max-width: 900px; margin: 0 auto;">${numogramSvgText}</div>`;
+}
+
+function highlightNumogram(containerId, inputAQ) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const svg = container.querySelector('svg.numogram');
+    if (!svg) return;
+    
+    clearHighlight(svg);
+    
     const root = digitalRoot(inputAQ);
-    const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
+    const twin = (root === 0) ? 9 : (root === 9) ? 0 : (9 - root);
     
-    let nodes = new Array(10);
-    // Left column: 9, 8, 7, 6, 5
-    nodes[9] = { x: 80, y: 40 };
-    nodes[8] = { x: 80, y: 100 };
-    nodes[7] = { x: 80, y: 160 };
-    nodes[6] = { x: 80, y: 220 };
-    nodes[5] = { x: 80, y: 280 };
-    // Right column: 0, 1, 2, 3, 4
-    nodes[0] = { x: 220, y: 40 };
-    nodes[1] = { x: 220, y: 100 };
-    nodes[2] = { x: 220, y: 160 };
-    nodes[3] = { x: 220, y: 220 };
-    nodes[4] = { x: 220, y: 280 };
+    svg.classList.add('highlighting');
     
-    let svg = `<svg viewBox="0 0 300 320" width="100%" height="240" style="max-width: 280px; background: rgba(0,0,0,0.3); border-radius: 8px; margin: 0.5rem auto; display: block; border: 1px solid var(--border-color);">`;
+    // Active zone
+    svg.querySelector(`#zone-${root}`)?.classList.add('active');
     
-    // Draw Syzygies (horizontal rungs)
-    const syzygies = [[0,9], [1,8], [2,7], [3,6], [4,5]];
-    syzygies.forEach(pair => {
-        let n1 = nodes[pair[0]], n2 = nodes[pair[1]];
-        let isActiveSyz = (pair[0] === root || pair[1] === root);
-        let sColor = isActiveSyz ? 'var(--primary-hover)' : 'var(--border-color)';
-        let sWidth = isActiveSyz ? '2.5' : '1.5';
-        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${sColor}" stroke-width="${sWidth}" />`;
-    });
+    // Syzygy twin
+    svg.querySelector(`#zone-${twin}`)?.classList.add('syzygy-active');
+    const [a, b] = [Math.min(root, twin), Math.max(root, twin)];
+    svg.querySelector(`#syz-${a}-${b}`)?.classList.add('active');
     
-    // Draw Time Circuit
-    const timeCircuit = [1, 2, 4, 8, 7, 5];
-    const circuitIndex = timeCircuit.indexOf(root);
-    let nextNode = -1;
-    if (circuitIndex !== -1) {
-        nextNode = timeCircuit[(circuitIndex + 1) % timeCircuit.length];
-    }
-
-    const timeCircuitEdges = [
-        { from: 1, to: 2, type: 'line' },
-        { from: 2, to: 4, type: 'arcRight' },
-        { from: 4, to: 8, type: 'line' },
-        { from: 8, to: 7, type: 'line' },
-        { from: 7, to: 5, type: 'arcLeft' },
-        { from: 5, to: 1, type: 'line' }
-    ];
-
-    timeCircuitEdges.forEach(edge => {
-        let n1 = nodes[edge.from];
-        let n2 = nodes[edge.to];
-        let isFlow = edge.from === root;
-        let strokeColor = isFlow ? 'var(--primary-hover)' : 'var(--border-color)';
-        let strokeWidth = isFlow ? '3' : '1.5';
-        let dash = isFlow ? '6,4' : '4,4';
-        
-        if (edge.type === 'line') {
-            svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
-        } else if (edge.type === 'arcRight') {
-            svg += `<path d="M ${n1.x} ${n1.y} Q 280 220 ${n2.x} ${n2.y}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
-        } else if (edge.type === 'arcLeft') {
-            svg += `<path d="M ${n1.x} ${n1.y} Q 20 220 ${n2.x} ${n2.y}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
-        }
-    });
-    
-    // Draw Nodes
-    for (let i = 0; i < 10; i++) {
-        let isRoot = i === root;
-        let isSyz = i === syzygy;
-        let isNextFlow = i === nextNode;
-        
-        let fill = '#050a05';
-        let textFill = 'var(--primary-color)';
-        let stroke = 'var(--border-color)';
-        let strokeWidth = '2';
-        
-        if (isRoot) {
-            fill = 'var(--primary-color)';
-            textFill = '#000';
-            stroke = '#fff';
-            strokeWidth = '3';
-        } else if (isSyz) {
-            fill = 'var(--text-muted)';
-            textFill = '#000';
-            stroke = 'var(--primary-color)';
-            strokeWidth = '2';
-        } else if (isNextFlow) {
-            fill = 'var(--primary-hover)';
-            textFill = '#000';
-            stroke = '#fff';
-            strokeWidth = '3';
-        }
-        
-        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="16" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
-        svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 6}" fill="${textFill}" font-size="16" font-weight="bold" text-anchor="middle" font-family="monospace">${i}</text>`;
+    // Tractor current (if root is a tractor zone)
+    const tractorCurrents = {1:'sink', 3:'warp', 5:'hold', 7:'surge', 9:'plex'};
+    if (tractorCurrents[root]) {
+        svg.querySelector(`#current-${tractorCurrents[root]}`)?.classList.add('active');
     }
     
-    svg += `</svg>`;
-    return svg;
+    // Time-circuit next step
+    const doubling = {1:2, 2:4, 4:8, 8:7, 7:5, 5:1};
+    if (doubling[root]) {
+        const next = doubling[root];
+        svg.querySelector(`#zone-${next}`)?.classList.add('flow-active');
+    }
+    
+    // Gate
+    const gateNums = {0:'00', 1:'01', 2:'03', 3:'06', 4:'10', 5:'15', 6:'21', 7:'28', 8:'36', 9:'45'};
+    svg.querySelector(`#gate-${gateNums[root]}`)?.classList.add('active');
+}
+
+function clearHighlight(svg) {
+    svg.classList.remove('highlighting');
+    svg.querySelectorAll('.active, .syzygy-active, .flow-active').forEach(el => {
+        el.classList.remove('active', 'syzygy-active', 'flow-active');
+    });
 }
 
 function generateHexagramSVG(inputAQ) {
@@ -482,9 +456,13 @@ function parseBible() {
 
 async function loadBible() {
     try {
-        const response = await fetch('kjv.txt');
-        if (!response.ok) throw new Error('Failed to fetch kjv.txt');
-        kjvText = await response.text();
+        const [bibleResp, svgText] = await Promise.all([
+            fetch('kjv.txt'),
+            fetch('numogram.svg').then(r => r.ok ? r.text() : Promise.reject('svg fetch failed'))
+        ]);
+        if (!bibleResp.ok) throw new Error('Failed to fetch kjv.txt');
+        kjvText = await bibleResp.text();
+        numogramSvgText = svgText;
         parseBible();
 
         isLoaded = true;
@@ -650,14 +628,18 @@ function displayResults(results, inputText, inputAQ) {
     const lexicalTwins = findLexicalTwins(inputAQ).join(', ');
     const root = digitalRoot(inputAQ);
     const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
-    const imps = Math.pow(2, root) - 1;
+    const imps = Math.pow(2, root);
     
     const timeCircuit = [1, 2, 4, 8, 7, 5];
     const circuitIndex = timeCircuit.indexOf(root);
-    let timeCircuitFlow = "Off-Circuit (Plex / Pole)";
+    let timeCircuitFlow;
     if (circuitIndex !== -1) {
         const nextNode = timeCircuit[(circuitIndex + 1) % timeCircuit.length];
         timeCircuitFlow = `${root} &rarr; ${nextNode}`;
+    } else if (root === 3 || root === 6) {
+        timeCircuitFlow = "Warp (vortical)";
+    } else {
+        timeCircuitFlow = "Plex (outer bound)";
     }
     
     const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
@@ -676,14 +658,16 @@ function displayResults(results, inputText, inputAQ) {
             <p><strong>AQ Value:</strong> ${inputAQ}</p>
             <p><strong>Pandemonium:</strong> ${numogramDemon} &middot; <strong>${imps} Imps</strong></p>
             <p><strong>Syzygy Twin:</strong> ${syzygy} &middot; <strong>Time-Circuit Flow:</strong> ${timeCircuitFlow}</p>
+            <p><strong>Mesh-Tag:</strong> ${getMeshTag(inputAQ)} &middot; <strong>Door:</strong> ${getDoor(inputAQ) || 'None (Zone 0)'}</p>
+            <p><strong>Tractor Current:</strong> ${getTractorCurrent(inputAQ) || 'Non-tractor zone'}</p>
             
-            <div style="display: flex; gap: 20px; align-items: center; margin: 15px 0; justify-content: center; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 250px; text-align: center;">
-                    <p style="margin-bottom: 5px;"><strong>Numogram Matrix</strong></p>
+            <div style="position: relative; margin: 15px 0; min-height: 600px;">
+                <div style="width: 100%; text-align: center;">
                     ${generateNumogramSVG(inputAQ)}
                 </div>
-                <div style="flex: 1; min-width: 200px; text-align: center;">
-                    <p style="margin-bottom: 5px;"><strong>I Ching Hexagram:</strong> ${hexagram}</p>
+                <div style="position: absolute; bottom: 10px; right: 10px; text-align: center; background: rgba(0,0,0,0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-width: 140px;">
+                    <p style="margin: 0 0 5px 0; font-size: 0.85rem;"><strong>I Ching:</strong></p>
+                    <p style="margin: 0 0 5px 0; font-size: 0.8rem; color: var(--text-muted);">${hexagram}</p>
                     ${generateHexagramSVG(inputAQ)}
                 </div>
             </div>
