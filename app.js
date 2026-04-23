@@ -710,7 +710,7 @@ function renderCurrentPage() {
             // Generate animated popup at cursor
             const popup = document.createElement('div');
             popup.className = 'sigil-popup';
-            popup.innerHTML = '<span>sigil generated above</span>';
+            popup.textContent = 'sigil generated above';
             popup.style.left = e.clientX + 'px';
             popup.style.top = e.clientY + 'px';
             document.body.appendChild(popup);
