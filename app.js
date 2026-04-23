@@ -612,7 +612,7 @@ function displayResults(results, inputText, inputAQ) {
     
     statsDiv.innerHTML = `
         <div class="ccru-metadata" style="margin-top: 0;">
-            <p><strong>AQ Value:</strong> ${inputAQ}</p>
+            <p><strong>AQ Value:</strong> ${inputAQ} &middot; <strong>Digital Root:</strong> ${root}</p>
             <p><strong>Pandemonium:</strong> ${numogramDemon} &middot; <strong>${imps} Imps</strong></p>
             <p><strong>Syzygy Twin:</strong> ${syzygy} &middot; <strong>Time-Circuit Flow:</strong> ${timeCircuitFlow}</p>
             <p><strong>Mesh-Tag:</strong> ${getMeshTag(inputAQ)} &middot; <strong>Door:</strong> ${getDoor(inputAQ) || 'None (Zone 0)'}</p>
@@ -623,7 +623,7 @@ function displayResults(results, inputText, inputAQ) {
                     <p style="margin: 0 0 8px 0; font-weight: bold; letter-spacing: 4px; color: var(--primary-color); font-family: 'Courier New', monospace; font-size: 1.1rem;">NUMOGRAM</p>
                     ${generateNumogramSVG(inputAQ)}
                 </div>
-                <div style="position: absolute; bottom: 10px; right: 10px; text-align: center; background: rgba(0,0,0,0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; min-width: 140px;">
+                <div style="position: absolute; bottom: 10px; right: 10px; text-align: center; background: rgba(0,0,0,0.6); border: 1px solid var(--border-color); border-radius: 0; padding: 10px; min-width: 140px;">
                     <p style="margin: 0 0 5px 0; font-size: 0.85rem;"><strong>I Ching:</strong></p>
                     <p style="margin: 0 0 5px 0; font-size: 0.8rem; color: var(--text-muted);">${hexagram}</p>
                     ${generateHexagramSVG(inputAQ)}
