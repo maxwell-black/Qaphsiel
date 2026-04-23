@@ -88,6 +88,21 @@ function el(tag, attrs) {
   return e;
 }
 
+// Palette snapshot refreshed from :root CSS vars on every render, so the
+// numogram stays in sync with the site theme. Fallbacks mirror styles.css.
+const PALETTE = { bright: '#00FF41', dim: '#008F11', bg: '#020202' };
+
+function refreshPalette() {
+  if (typeof getComputedStyle === 'undefined') return;
+  const cs = getComputedStyle(document.documentElement);
+  const bright = cs.getPropertyValue('--primary-color').trim();
+  const dim = cs.getPropertyValue('--text-muted').trim();
+  const bg = cs.getPropertyValue('--bg-color').trim();
+  if (bright) PALETTE.bright = bright;
+  if (dim) PALETTE.dim = dim;
+  if (bg) PALETTE.bg = bg;
+}
+
 // Perpendicular offset point from chord midpoint.
 // Positive offset bows one way, negative the other.
 function offsetPoint(ax, ay, bx, by, offset) {
@@ -122,7 +137,7 @@ function drawSyzygy(svg, a, b) {
   const pa = ZONE_POSITIONS[a], pb = ZONE_POSITIONS[b];
   svg.appendChild(el('path', {
     d: arcPath(pa.x, pa.y, pb.x, pb.y, -12),
-    stroke: '#00ff66', 'stroke-width': 1, fill: 'none',
+    stroke: PALETTE.bright, 'stroke-width': 1, fill: 'none',
     class: 'rel rel-syzygy'
   }));
 }
@@ -131,7 +146,7 @@ function drawCurrent(svg, from, to) {
   const pa = ZONE_POSITIONS[from], pb = ZONE_POSITIONS[to];
   svg.appendChild(el('path', {
     d: arcPath(pa.x, pa.y, pb.x, pb.y, 28),
-    stroke: '#00ff66', 'stroke-width': 3.5, fill: 'none',
+    stroke: PALETTE.bright, 'stroke-width': 3.5, fill: 'none',
     'marker-end': 'url(#ar-current)',
     class: 'rel rel-current'
   }));
@@ -141,7 +156,7 @@ function drawOutboundGate(svg, from, to) {
   const pa = ZONE_POSITIONS[from], pb = ZONE_POSITIONS[to];
   svg.appendChild(el('path', {
     d: arcPath(pa.x, pa.y, pb.x, pb.y, 50),
-    stroke: '#00ff66', 'stroke-width': 1.2, fill: 'none',
+    stroke: PALETTE.bright, 'stroke-width': 1.2, fill: 'none',
     'stroke-dasharray': '8 4', 'marker-end': 'url(#ar)',
     class: 'rel rel-outbound-gate'
   }));
@@ -152,7 +167,7 @@ function drawInboundGate(svg, from, to, stackIdx) {
   const offset = -50 - (stackIdx * 20);
   svg.appendChild(el('path', {
     d: arcPath(pa.x, pa.y, pb.x, pb.y, offset),
-    stroke: '#00ff66', 'stroke-width': 1.2, fill: 'none',
+    stroke: PALETTE.bright, 'stroke-width': 1.2, fill: 'none',
     'stroke-dasharray': '2 4', 'marker-end': 'url(#ar)',
     class: 'rel rel-inbound-gate'
   }));
@@ -168,13 +183,13 @@ function drawNextInCycle(svg, from, to) {
   svg.appendChild(el('line', {
     x1: pa.x + px * o, y1: pa.y + py * o,
     x2: pb.x + px * o, y2: pb.y + py * o,
-    stroke: '#00ff66', 'stroke-width': 1,
+    stroke: PALETTE.bright, 'stroke-width': 1,
     class: 'rel rel-cycle'
   }));
   svg.appendChild(el('line', {
     x1: pa.x - px * o, y1: pa.y - py * o,
     x2: pb.x - px * o, y2: pb.y - py * o,
-    stroke: '#00ff66', 'stroke-width': 1,
+    stroke: PALETTE.bright, 'stroke-width': 1,
     'marker-end': 'url(#ar-sm)',
     class: 'rel rel-cycle'
   }));
@@ -195,7 +210,7 @@ function drawSelfLoop(svg, zone, side) {
     d = `M ${sx} ${sy} Q ${p.x + r * 1.9} ${p.y - r * 1.6} ${p.x + r * 1.9} ${p.y - r * 0.3} Q ${p.x + r * 1.9} ${p.y + r * 0.3} ${ex} ${ey}`;
   }
   svg.appendChild(el('path', {
-    d: d, stroke: '#00ff66', 'stroke-width': 1.2, fill: 'none',
+    d: d, stroke: PALETTE.bright, 'stroke-width': 1.2, fill: 'none',
     'stroke-dasharray': '8 4', 'marker-end': 'url(#ar)',
     class: 'rel rel-self-loop'
   }));
@@ -238,14 +253,14 @@ function drawZones(svg, queriedZone, participants) {
     let r, fill, strokeColor, strokeWidth, dashArray, textColor, textSize, textWeight;
 
     if (isActive) {
-      r = 22; fill = '#00ff66'; strokeColor = '#00ff66'; strokeWidth = 1.5;
+      r = 22; fill = PALETTE.bright; strokeColor = PALETTE.bright; strokeWidth = 1.5;
       dashArray = null; textColor = '#000000'; textSize = 17; textWeight = 'bold';
     } else if (isParticipant) {
-      r = 20; fill = '#0a0a0a'; strokeColor = '#00ff66'; strokeWidth = 1.5;
-      dashArray = '3 2'; textColor = '#00ff66'; textSize = 16; textWeight = 'bold';
+      r = 20; fill = PALETTE.bg; strokeColor = PALETTE.bright; strokeWidth = 1.5;
+      dashArray = '3 2'; textColor = PALETTE.bright; textSize = 16; textWeight = 'bold';
     } else {
-      r = 18; fill = '#0a0a0a'; strokeColor = '#006633'; strokeWidth = 1;
-      dashArray = null; textColor = '#006633'; textSize = 15; textWeight = 'normal';
+      r = 18; fill = PALETTE.bg; strokeColor = PALETTE.dim; strokeWidth = 1;
+      dashArray = null; textColor = PALETTE.dim; textSize = 15; textWeight = 'normal';
     }
 
     const attrs = {
@@ -276,6 +291,8 @@ function renderZone(zoneNum) {
   const svg = document.getElementById('numogram-svg');
   if (!svg) return;
 
+  refreshPalette();
+
   // Clear existing dynamic content
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
@@ -283,13 +300,13 @@ function renderZone(zoneNum) {
   const defs = el('defs', {});
   defs.innerHTML = `
     <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto">
-      <polygon points="0,0 10,5 0,10" fill="none" stroke="#00ff66" stroke-width="1.2"/>
+      <polygon points="0,0 10,5 0,10" fill="none" stroke="${PALETTE.bright}" stroke-width="1.2"/>
     </marker>
     <marker id="ar-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto">
-      <polygon points="0,0 10,5 0,10" fill="none" stroke="#00ff66" stroke-width="1.2"/>
+      <polygon points="0,0 10,5 0,10" fill="none" stroke="${PALETTE.bright}" stroke-width="1.2"/>
     </marker>
     <marker id="ar-current" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-      <polygon points="0,0 10,5 0,10" fill="#00ff66"/>
+      <polygon points="0,0 10,5 0,10" fill="${PALETTE.bright}"/>
     </marker>
   `;
   svg.appendChild(defs);
