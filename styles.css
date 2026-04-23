@@ -531,7 +531,7 @@ footer {
     font-weight: bold;
     text-transform: lowercase;
     z-index: 10000;
-    animation: fadePopup 2s forwards;
+    animation: fadePopup 1.23s forwards;
     transform-origin: top left;
     white-space: nowrap;
 }

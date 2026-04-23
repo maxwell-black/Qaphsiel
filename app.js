@@ -716,7 +716,7 @@ function renderCurrentPage() {
             document.body.appendChild(popup);
             
             // Remove after animation completes
-            setTimeout(() => popup.remove(), 2000);
+            setTimeout(() => popup.remove(), 1230);
         });
 
         const metaSpan = document.createElement('span');
