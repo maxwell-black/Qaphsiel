@@ -282,21 +282,33 @@ function generateNumogramSVG(inputAQ) {
     const root = digitalRoot(inputAQ);
     const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
     
-    let nodes = [];
-    const cx = 150, cy = 150, r = 110;
-    for (let i = 0; i < 10; i++) {
-        let angle = (i * Math.PI * 2) / 10 - Math.PI / 2;
-        nodes.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
-    }
+    let nodes = new Array(10);
+    // Left column: 9, 8, 7, 6, 5
+    nodes[9] = { x: 80, y: 40 };
+    nodes[8] = { x: 80, y: 100 };
+    nodes[7] = { x: 80, y: 160 };
+    nodes[6] = { x: 80, y: 220 };
+    nodes[5] = { x: 80, y: 280 };
+    // Right column: 0, 1, 2, 3, 4
+    nodes[0] = { x: 220, y: 40 };
+    nodes[1] = { x: 220, y: 100 };
+    nodes[2] = { x: 220, y: 160 };
+    nodes[3] = { x: 220, y: 220 };
+    nodes[4] = { x: 220, y: 280 };
     
-    let svg = `<svg viewBox="0 0 300 300" width="100%" height="200" style="max-width: 250px; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 0.5rem auto; display: block;">`;
+    let svg = `<svg viewBox="0 0 300 320" width="100%" height="240" style="max-width: 280px; background: rgba(0,0,0,0.3); border-radius: 8px; margin: 0.5rem auto; display: block; border: 1px solid var(--border-color);">`;
     
+    // Draw Syzygies (horizontal rungs)
     const syzygies = [[0,9], [1,8], [2,7], [3,6], [4,5]];
     syzygies.forEach(pair => {
         let n1 = nodes[pair[0]], n2 = nodes[pair[1]];
-        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="var(--border-color)" stroke-width="1"/>`;
+        let isActiveSyz = (pair[0] === root || pair[1] === root);
+        let sColor = isActiveSyz ? 'var(--primary-hover)' : 'var(--border-color)';
+        let sWidth = isActiveSyz ? '2.5' : '1.5';
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${sColor}" stroke-width="${sWidth}" />`;
     });
     
+    // Draw Time Circuit
     const timeCircuit = [1, 2, 4, 8, 7, 5];
     const circuitIndex = timeCircuit.indexOf(root);
     let nextNode = -1;
@@ -304,33 +316,61 @@ function generateNumogramSVG(inputAQ) {
         nextNode = timeCircuit[(circuitIndex + 1) % timeCircuit.length];
     }
 
-    for (let i=0; i<timeCircuit.length; i++) {
-        let n1 = nodes[timeCircuit[i]];
-        let n2 = nodes[timeCircuit[(i+1)%timeCircuit.length]];
-        let isFlow = timeCircuit[i] === root;
+    const timeCircuitEdges = [
+        { from: 1, to: 2, type: 'line' },
+        { from: 2, to: 4, type: 'arcRight' },
+        { from: 4, to: 8, type: 'line' },
+        { from: 8, to: 7, type: 'line' },
+        { from: 7, to: 5, type: 'arcLeft' },
+        { from: 5, to: 1, type: 'line' }
+    ];
+
+    timeCircuitEdges.forEach(edge => {
+        let n1 = nodes[edge.from];
+        let n2 = nodes[edge.to];
+        let isFlow = edge.from === root;
         let strokeColor = isFlow ? 'var(--primary-hover)' : 'var(--border-color)';
-        let strokeWidth = isFlow ? '2.5' : '1';
+        let strokeWidth = isFlow ? '3' : '1.5';
         let dash = isFlow ? '6,4' : '4,4';
-        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
-    }
+        
+        if (edge.type === 'line') {
+            svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
+        } else if (edge.type === 'arcRight') {
+            svg += `<path d="M ${n1.x} ${n1.y} Q 280 220 ${n2.x} ${n2.y}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
+        } else if (edge.type === 'arcLeft') {
+            svg += `<path d="M ${n1.x} ${n1.y} Q 20 220 ${n2.x} ${n2.y}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dash}"/>`;
+        }
+    });
     
-    let h1 = nodes[root], h2 = nodes[syzygy];
-    svg += `<line x1="${h1.x}" y1="${h1.y}" x2="${h2.x}" y2="${h2.y}" stroke="var(--primary-color)" stroke-width="3"/>`;
-    
+    // Draw Nodes
     for (let i = 0; i < 10; i++) {
         let isRoot = i === root;
         let isSyz = i === syzygy;
         let isNextFlow = i === nextNode;
         
-        let fill = '#111';
-        if (isRoot) fill = 'var(--primary-color)';
-        else if (isSyz) fill = 'var(--primary-hover)';
-        else if (isNextFlow) fill = 'rgba(0, 255, 65, 0.2)';
+        let fill = '#050a05';
+        let textFill = 'var(--primary-color)';
+        let stroke = 'var(--border-color)';
+        let strokeWidth = '2';
         
-        let stroke = (isRoot || isSyz || isNextFlow) ? 'var(--primary-color)' : 'var(--text-main)';
-        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="15" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+        if (isRoot) {
+            fill = 'var(--primary-color)';
+            textFill = '#000';
+            stroke = '#fff';
+            strokeWidth = '3';
+        } else if (isSyz) {
+            fill = 'var(--text-muted)';
+            textFill = '#000';
+            stroke = 'var(--primary-color)';
+            strokeWidth = '2';
+        } else if (isNextFlow) {
+            fill = 'var(--primary-hover)';
+            textFill = '#000';
+            stroke = '#fff';
+            strokeWidth = '3';
+        }
         
-        let textFill = (isRoot || isSyz) ? '#000' : 'var(--primary-color)';
+        svg += `<circle cx="${nodes[i].x}" cy="${nodes[i].y}" r="16" fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}"/>`;
         svg += `<text x="${nodes[i].x}" y="${nodes[i].y + 6}" fill="${textFill}" font-size="16" font-weight="bold" text-anchor="middle" font-family="monospace">${i}</text>`;
     }
     
