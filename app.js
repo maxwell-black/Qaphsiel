@@ -736,10 +736,10 @@ function renderCurrentPage() {
         phraseTitle.addEventListener('mouseleave', () => {
             if (activePopup) {
                 activePopup.style.animation = 'none';
-                activePopup.style.transition = 'opacity 0.2s ease-out';
+                activePopup.style.transition = 'opacity 0.5s ease-out';
                 activePopup.style.opacity = '0';
                 const p = activePopup;
-                setTimeout(() => p.remove(), 200);
+                setTimeout(() => p.remove(), 500);
                 activePopup = null;
             }
         });
