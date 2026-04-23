@@ -699,6 +699,9 @@ function renderCurrentPage() {
         phraseTitle.className = 'phrase-text';
         phraseTitle.textContent = `"${group.text}"`;
         phraseTitle.title = "Click to generate sigil";
+        let activePopup = null;
+        let popupTimeout = null;
+
         phraseTitle.addEventListener('click', (e) => {
             switchTab('sigil-generator');
             const aqInput = document.getElementById('aqSquareInput');
@@ -707,6 +710,11 @@ function renderCurrentPage() {
                 updateAqSquareSigil();
             }
             
+            if (activePopup) {
+                activePopup.remove();
+                clearTimeout(popupTimeout);
+            }
+
             // Generate animated popup at cursor
             const popup = document.createElement('div');
             popup.className = 'sigil-popup';
@@ -714,9 +722,26 @@ function renderCurrentPage() {
             popup.style.left = e.clientX + 'px';
             popup.style.top = e.clientY + 'px';
             document.body.appendChild(popup);
+            activePopup = popup;
             
             // Remove after animation completes
-            setTimeout(() => popup.remove(), 1230);
+            popupTimeout = setTimeout(() => {
+                if (activePopup === popup) {
+                    popup.remove();
+                    activePopup = null;
+                }
+            }, 1230);
+        });
+
+        phraseTitle.addEventListener('mouseleave', () => {
+            if (activePopup) {
+                activePopup.style.animation = 'none';
+                activePopup.style.transition = 'opacity 0.2s ease-out';
+                activePopup.style.opacity = '0';
+                const p = activePopup;
+                setTimeout(() => p.remove(), 200);
+                activePopup = null;
+            }
         });
 
         const metaSpan = document.createElement('span');
