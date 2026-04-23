@@ -2,13 +2,10 @@
 
 A hyperstitional, browser-based research tool for searching the King James Bible via Alphanumeric Qabbala (AQ) and other mathematical games derived from the Cybernetic Culture Research Unit (CCRU) and Nick Land.
 
-The tool strips the text of its theological meaning, treating it instead as an anorganic numeric topography to map synchronicities, "Lexical Twins", and occult data structures.
-
 ## Core Esoteric Features
 
 *   **Alphanumeric Qabbala (AQ):** A base-36 mapping where A-Z = 10-35, and 0-9 retain their value. Discover "Lexical Twins" (disparate words that share exact numeric vibrations).
 *   **The Pandemonium Matrix:** Every search dynamically generates an interactive SVG of the CCRU Numogram. It calculates the digital root to determine the reigning "Zone Demon" (e.g., *Uttunul*, *Oddubb*), displays its 9-sum Syzygy Twin, and plots its "Time-Circuit" alignment.
-*   **Imp Calculator:** Implements the CCRU formula `2^n - 1` to instantly calculate the demonic subcomponents ("Imps") for any search.
 *   **Hyperprime Resonance (Barker Filter):** Expanding search parameters to treat numbers as prime coordinates. Finding a word with an AQ of 3 simultaneously searches the Bible for words equaling 5 (the 3rd prime) and 2 (since 3 is the 2nd prime), revealing deep Tic-System connections.
 *   **Xenotation Compiler:** Translates standard numbers into Dr. D.C. Barker's Tic Xenotation (TX)—a baseless numeral system mapped entirely via prime factorization and implexion (e.g., `((•))(•)`). Includes a reverse-compiler to type raw Xenotation strings and search the Bible for them.
 *   **I Ching Transcompiler:** Maps AQ values to the 64 Hexagrams of the I Ching, visualizing the Yin/Yang lines as binary logic gates plotted into Lemurian time sorcery.
