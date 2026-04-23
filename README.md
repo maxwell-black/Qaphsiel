@@ -12,7 +12,6 @@ The tool strips the text of its theological meaning, treating it instead as an a
 *   **Hyperprime Resonance (Barker Filter):** Expanding search parameters to treat numbers as prime coordinates. Finding a word with an AQ of 3 simultaneously searches the Bible for words equaling 5 (the 3rd prime) and 2 (since 3 is the 2nd prime), revealing deep Tic-System connections.
 *   **Xenotation Compiler:** Translates standard numbers into Dr. D.C. Barker's Tic Xenotation (TX)—a baseless numeral system mapped entirely via prime factorization and implexion (e.g., `((•))(•)`). Includes a reverse-compiler to type raw Xenotation strings and search the Bible for them.
 *   **I Ching Transcompiler:** Maps AQ values to the 64 Hexagrams of the I Ching, visualizing the Yin/Yang lines as binary logic gates plotted into Lemurian time sorcery.
-*   **Oedipus / Meat Subtraction:** A filter that strips humanistic/divine stop-words (e.g., *God, Lord, man, Jesus, father*) to run pure machinic searches free of standard theological noise.
 *   **Sigil Generator:** Maps a word across a 6x6 alphanumeric grid and draws an SVG sigil path based on its character values. Includes a dynamic cursor-fade popup.
 
 ## Running the Application
