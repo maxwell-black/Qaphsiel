@@ -1,4 +1,4 @@
-# AQ Bible Search
+# Qaphsiel
 
 A simple web application for searching Bible verses by AQ (Alphanumeric Qabbala) values.
 
