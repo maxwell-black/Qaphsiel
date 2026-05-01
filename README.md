@@ -4,12 +4,12 @@ A hyperstitional, browser-based research tool for searching the King James Bible
 
 ## Core Esoteric Features
 
-- **Alphanumeric Qabbala (AQ):** A base-36 mapping where A-Z = 10-35, and 0-9 retain their value. Discover "Lexical Twins" (disparate words that share exact numeric vibrations).
-- **The Pandemonium Matrix:** Every search dynamically generates an interactive SVG of the CCRU Numogram. It calculates the digital root to determine the reigning "Zone Demon" (e.g., _Uttunul_, _Oddubb_), displays its 9-sum Syzygy Twin, and plots its "Time-Circuit" alignment.
-- **Hyperprime Resonance (Barker Filter):** Expanding search parameters to treat numbers as prime coordinates. Finding a word with an AQ of 3 simultaneously searches the Bible for words equaling 5 (the 3rd prime) and 2 (since 3 is the 2nd prime), revealing deep Tic-System connections.
-- **Xenotation Compiler:** Translates standard numbers into Dr. D.C. Barker's Tic Xenotation (TX)—a baseless numeral system mapped entirely via prime factorization and implexion (e.g., `((•))(•)`). Includes a reverse-compiler to type raw Xenotation strings and search the Bible for them.
-- **I Ching Transcompiler:** Maps AQ values to the 64 Hexagrams of the I Ching, visualizing the Yin/Yang lines as binary logic gates plotted into Lemurian time sorcery.
-- **Sigil Generator:** Maps a word across a 6x6 alphanumeric grid and draws an SVG sigil path based on its character values. Includes a dynamic cursor-fade popup.
+*   **Alphanumeric Qabbala (AQ):** A base-36 mapping where A-Z = 10-35, and 0-9 retain their value. Discover "Lexical Twins" (disparate words that share exact numeric vibrations).
+*   **The Pandemonium Matrix:** Every search dynamically generates an interactive SVG of the CCRU Numogram. It calculates the digital root to determine the reigning "Zone Demon" (e.g., *Uttunul*, *Oddubb*), displays its 9-sum Syzygy Twin, and plots its "Time-Circuit" alignment.
+*   **Hyperprime Resonance (Barker Filter):** Expanding search parameters to treat numbers as prime coordinates. Finding a word with an AQ of 3 simultaneously searches the Bible for words equaling 5 (the 3rd prime) and 2 (since 3 is the 2nd prime), revealing deep Tic-System connections.
+*   **Xenotation Compiler:** Translates standard numbers into Dr. D.C. Barker's Tic Xenotation (TX)—a baseless numeral system mapped entirely via prime factorization and implexion (e.g., `((•))(•)`). Includes a reverse-compiler to type raw Xenotation strings and search the Bible for them.
+*   **I Ching Transcompiler:** Maps AQ values to the 64 Hexagrams of the I Ching, visualizing the Yin/Yang lines as binary logic gates plotted into Lemurian time sorcery.
+*   **Sigil Generator:** Maps a word across a 6x6 alphanumeric grid and draws an SVG sigil path based on its character values. Includes a dynamic cursor-fade popup.
 
 ## Accessing the Application
 
@@ -30,13 +30,10 @@ If you have Python installed, open a terminal in this folder and run:
 # Python 3
 python -m http.server 8000
 ```
-
 Then open your browser and go to: `http://localhost:8000`
 
 ### Option 2: Node.js
-
 ```bash
 npx http-server -p 8000
 ```
-
 Then open: `http://localhost:8000`

@@ -31,14 +31,6 @@ describe("Math Utility Functions", () => {
 
   describe("isTriangular", () => {
     test("identifies triangular numbers", () => {
-      // T_n = n(n+1)/2
-      // T_0 = 0
-      // T_1 = 1
-      // T_2 = 3
-      // T_3 = 6
-      // T_4 = 10
-      // T_5 = 15
-      // T_6 = 21
       expect(isTriangular(0)).toBe(true);
       expect(isTriangular(1)).toBe(true);
       expect(isTriangular(3)).toBe(true);
@@ -46,7 +38,7 @@ describe("Math Utility Functions", () => {
       expect(isTriangular(10)).toBe(true);
       expect(isTriangular(15)).toBe(true);
       expect(isTriangular(21)).toBe(true);
-      expect(isTriangular(55)).toBe(true); // T_10
+      expect(isTriangular(55)).toBe(true);
     });
 
     test("identifies non-triangular numbers", () => {
@@ -66,9 +58,7 @@ describe("Math Utility Functions", () => {
     });
 
     test("handles large triangular numbers", () => {
-      // T_100 = 100 * 101 / 2 = 5050
       expect(isTriangular(5050)).toBe(true);
-      // T_1000 = 1000 * 1001 / 2 = 500500
       expect(isTriangular(500500)).toBe(true);
     });
   });
