@@ -6,15 +6,15 @@
     --border-color: #008F11;
     --primary-color: #00FF41;
     --primary-hover: #39FF14;
-    
+
     --font-heading: 'Share Tech Mono', 'Courier New', Courier, monospace;
     --font-ui: 'Share Tech Mono', 'Courier New', Courier, monospace;
     --font-bible: 'Share Tech Mono', 'Courier New', Courier, monospace;
-    
+
     --shadow-sm: 0 0 5px rgba(0, 255, 65, 0.2);
     --shadow-md: 0 0 10px rgba(0, 255, 65, 0.3);
     --shadow-lg: 0 0 15px rgba(0, 255, 65, 0.5);
-    
+
     --radius: 0px; /* Square edges for the terminal look */
     --transition: 0.1s ease-in-out;
 }
@@ -38,12 +38,12 @@ body {
     min-height: 100vh;
     /* Optional matrix-like scanline overlay */
     background-image: linear-gradient(
-      rgba(0, 255, 65, 0.05) 1px, 
+      rgba(0, 255, 65, 0.05) 1px,
       transparent 1px
     ),
     linear-gradient(
-      90deg, 
-      rgba(0, 255, 65, 0.05) 1px, 
+      90deg,
+      rgba(0, 255, 65, 0.05) 1px,
       transparent 1px
     );
     background-size: 2px 2px;

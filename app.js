@@ -211,12 +211,12 @@ function xenotate(n) {
     if (n === 0) return '0';
     if (n === 1) return '';
     if (n === 2) return '•';
-    
+
     if (isPrime(n)) {
         const idx = getPrimeIndex(n);
         return '(' + xenotate(idx) + ')';
     }
-    
+
     const factors = primeFactorization(n);
     factors.sort((a, b) => b - a);
     let result = '';
@@ -255,7 +255,7 @@ function unxenotate(str) {
             if (depth > 0) current += char;
         }
     }
-    
+
     let product = 1;
     factors.forEach(f => {
         if (f === '•' || f === ':' || f === '.') {
@@ -272,7 +272,7 @@ function unxenotate(str) {
 function getHyperprimeResonances(targetAQ) {
     let targets = [targetAQ];
     if (targetAQ > 0) {
-        if (targetAQ < 1000) { 
+        if (targetAQ < 1000) {
             let nth = getNthPrime(targetAQ);
             if (nth) targets.push(nth);
         }
@@ -318,7 +318,7 @@ function generateHexagramSVG(inputAQ) {
     const mod = inputAQ % 64;
     const index = mod === 0 ? 63 : mod - 1;
     let bin = index.toString(2).padStart(6, '0');
-    
+
     let svg = `<svg viewBox="0 0 100 120" width="80" height="100" style="margin: auto; display: block;">`;
     for(let i=0; i<6; i++) {
         let bit = bin[i];
@@ -356,7 +356,7 @@ function parseBible() {
     verses = [];
     cumsum = [0];
     cumsumMap = new Map();
-    
+
     const useOedipus = document.getElementById('oedipusFilter') && document.getElementById('oedipusFilter').checked;
     const lines = kjvText.split('\n');
 
@@ -369,7 +369,7 @@ function parseBible() {
 
         const tabIndex = line.indexOf('\t');
         if (tabIndex === -1) continue;
-        
+
         const verseText = line.substring(tabIndex + 1);
         let verseWords = extractWords(verseText);
 
@@ -411,7 +411,7 @@ function parseBible() {
         }
         cumsumMap.get(sum).push(i);
     }
-    
+
     console.log(`Parsed ${words.length} words from ${verses.length} verses. Oedipus Filter: ${useOedipus}`);
 }
 
@@ -577,7 +577,7 @@ function displayResults(results, inputText, inputAQ) {
 
     const totalPhrases = groupedArray.length;
     const totalOccurrences = results.length;
-    
+
     // Calculate CCRU Metadata
     const numogramDemon = getNumogramDemon(inputAQ);
     const hexagram = getHexagram(inputAQ);
@@ -586,7 +586,7 @@ function displayResults(results, inputText, inputAQ) {
     const root = digitalRoot(inputAQ);
     const syzygy = (root === 0 || root === 9) ? (root === 0 ? 9 : 0) : 9 - root;
     const imps = Math.pow(2, root);
-    
+
     const timeCircuit = [1, 2, 4, 8, 7, 5];
     const circuitIndex = timeCircuit.indexOf(root);
     let timeCircuitFlow;
@@ -598,10 +598,10 @@ function displayResults(results, inputText, inputAQ) {
     } else {
         timeCircuitFlow = "Plex (outer bound)";
     }
-    
+
     const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
     const showVerses = activeTab === 'text-search' || activeTab === 'number-search';
-    
+
     let foundText = '';
     if (showVerses) {
         foundText = `
@@ -609,7 +609,7 @@ function displayResults(results, inputText, inputAQ) {
             <p style="margin: 0;">Found <strong>${totalPhrases}</strong> unique phrase${totalPhrases !== 1 ? 's' : ''} across <strong>${totalOccurrences}</strong> occurrence${totalOccurrences !== 1 ? 's' : ''}.</p>
         </div>`;
     }
-    
+
     statsDiv.innerHTML = `
         <div class="ccru-metadata" style="margin-top: 0;">
             <p><strong>AQ Value:</strong> ${inputAQ} &middot; <strong>Digital Root:</strong> ${root}</p>
@@ -643,7 +643,7 @@ function renderCurrentPage() {
     const resultsDiv = document.getElementById('results');
     const paginationTopDiv = document.getElementById('paginationTop');
     const paginationBottomDiv = document.getElementById('paginationBottom');
-    
+
     const activeTab = document.querySelector('.tab-btn.active')?.getAttribute('data-tab');
     const showVerses = activeTab === 'text-search' || activeTab === 'number-search';
 
@@ -669,7 +669,7 @@ function renderCurrentPage() {
         paginationBottomDiv.style.display = 'flex';
         document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
         document.getElementById('pageInfoBottom').textContent = `Page ${currentPage} of ${totalPages}`;
-        
+
         document.getElementById('prevPage').disabled = currentPage === 1;
         document.getElementById('nextPage').disabled = currentPage === totalPages;
         document.getElementById('prevPageBottom').disabled = currentPage === 1;
@@ -697,12 +697,12 @@ function renderCurrentPage() {
         if (count > MAX_REFS_DISPLAY) {
             refsText += `, and ${count - MAX_REFS_DISPLAY} more`;
         }
-        
+
         const phraseAQ = cumsum[group.endIndex] - cumsum[group.startIndex];
 
         const header = document.createElement('div');
         header.className = 'result-header';
-        
+
         const phraseTitle = document.createElement('span');
         phraseTitle.className = 'phrase-text';
         phraseTitle.textContent = `"${group.text}"`;
@@ -714,7 +714,7 @@ function renderCurrentPage() {
                 aqInput.value = group.text;
                 updateAqSquareSigil();
             }
-            
+
             // Generate animated popup at cursor
             const popup = document.createElement('div');
             popup.className = 'sigil-popup';
@@ -722,7 +722,7 @@ function renderCurrentPage() {
             popup.style.left = e.clientX + 'px';
             popup.style.top = e.clientY + 'px';
             document.body.appendChild(popup);
-            
+
             // Remove after animation completes
             setTimeout(() => popup.remove(), 1230);
         });
@@ -737,7 +737,7 @@ function renderCurrentPage() {
         const refsDiv = document.createElement('div');
         refsDiv.className = 'verse-references';
         refsDiv.innerHTML = `<strong>References:</strong> <span style="color:var(--text-muted);">${refsText}</span> (${count})`;
-        
+
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'toggle-verses-btn';
         toggleBtn.textContent = 'View Context';
@@ -752,7 +752,7 @@ function renderCurrentPage() {
                 if (seenVerses.has(vi)) continue;
                 seenVerses.add(vi);
                 const verse = verses[vi];
-                
+
                 const verseBlock = document.createElement('div');
                 verseBlock.className = 'verse-block';
                 verseBlock.innerHTML = `<span class="verse-ref">${verse.ref.fullRef}</span> ${verse.text}`;
@@ -788,19 +788,19 @@ function goToPage(page) {
 function execSearchQuery(inputAQ, inputText) {
     const maxWords = parseInt(document.getElementById('maxWords').value) || 10;
     const phraseScope = document.getElementById('phraseScope').value;
-    
+
     let targetAQs = [inputAQ];
     const useHyperprime = document.getElementById('hyperprimeFilter') && document.getElementById('hyperprimeFilter').checked;
     if (useHyperprime) {
         targetAQs = getHyperprimeResonances(inputAQ);
     }
-    
+
     let allResults = [];
     targetAQs.forEach(tAQ => {
         let res = searchAQ(tAQ, maxWords, phraseScope);
         allResults = allResults.concat(res);
     });
-    
+
     displayResults(allResults, inputText, inputAQ);
 }
 
@@ -808,7 +808,7 @@ function handleSearch() {
     if (!isLoaded) return alert('Bible text is still loading.');
     const inputText = document.getElementById('searchInput').value.trim();
     if (!inputText) return alert('Please enter text to search.');
-    
+
     const inputAQ = calculateStringAQ(inputText);
     execSearchQuery(inputAQ, inputText);
 }
@@ -817,7 +817,7 @@ function handleNumericSearch() {
     if (!isLoaded) return alert('Bible text is still loading.');
     const numericInput = document.getElementById('numericInput').value.trim();
     if (!numericInput || !/^\d+$/.test(numericInput)) return alert('Please enter a valid positive number.');
-    
+
     const inputAQ = parseInt(numericInput, 10);
     execSearchQuery(inputAQ, `AQ ${numericInput}`);
 }
@@ -826,7 +826,7 @@ function handleChronomancy() {
     if (!isLoaded) return alert('Bible text is still loading.');
     const year = document.getElementById('chronoInput').value.trim();
     if (!year || !/^\d+$/.test(year)) return alert('Please enter a valid year.');
-    
+
     const inputAQ = parseInt(year, 10);
     execSearchQuery(inputAQ, `Temporal Index ${year}`);
 }
@@ -835,11 +835,11 @@ function handleXenotationSearch() {
     if (!isLoaded) return alert('Bible text is still loading.');
     const xenoInput = document.getElementById('xenoInput').value.trim();
     if (!xenoInput) return alert('Please enter a Xenotation string.');
-    
+
     try {
         const inputAQ = unxenotate(xenoInput);
         if (inputAQ === null || isNaN(inputAQ) || inputAQ < 0) throw new Error("Invalid");
-        
+
         execSearchQuery(inputAQ, `TX: ${xenoInput}`);
     } catch(e) {
         alert('Could not parse Xenotation. Ensure you use only •, :, (, and )');
@@ -850,7 +850,7 @@ function handleXenotationSearch() {
 function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    
+
     document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
     document.getElementById(tabId).classList.add('active');
 
@@ -860,9 +860,11 @@ function switchTab(tabId) {
     }
 }
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => switchTab(e.target.getAttribute('data-tab')));
-});
+if (typeof document !== 'undefined') {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => switchTab(e.target.getAttribute('data-tab')));
+    });
+}
 
 // Sigil Generator
 function buildAqSquareGrid() {
@@ -883,12 +885,12 @@ function renderAqSquareSvgGrid() {
     const size = 240;
     const padding = 20;
     const cellSize = (size - 2 * padding) / 6;
-    
+
     svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
     svg.innerHTML = '';
 
     const ns = 'http://www.w3.org/2000/svg';
-    
+
     const border = document.createElementNS(ns, 'rect');
     border.setAttribute('x', padding);
     border.setAttribute('y', padding);
@@ -916,7 +918,7 @@ function updateAqSquareSigil() {
     if (previousPath) previousPath.remove();
     svg.querySelector('#aqStartDot')?.remove();
     svg.querySelector('#aqEndDot')?.remove();
-    
+
     const defs = svg.querySelector('defs');
     if (defs) defs.remove();
 
@@ -986,31 +988,41 @@ function updateAqSquareSigil() {
 }
 
 // Event Listeners
-document.getElementById('searchButton').addEventListener('click', handleSearch);
-document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
+if (typeof document !== 'undefined') {
+    document.getElementById('searchButton').addEventListener('click', handleSearch);
+    document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
-document.getElementById('numericSearchButton').addEventListener('click', handleNumericSearch);
-document.getElementById('numericInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleNumericSearch(); });
+    document.getElementById('numericSearchButton').addEventListener('click', handleNumericSearch);
+    document.getElementById('numericInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleNumericSearch(); });
 
-document.getElementById('xenoSearchButton').addEventListener('click', handleXenotationSearch);
-document.getElementById('xenoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleXenotationSearch(); });
+    document.getElementById('xenoSearchButton').addEventListener('click', handleXenotationSearch);
+    document.getElementById('xenoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleXenotationSearch(); });
 
-document.getElementById('oedipusFilter').addEventListener('change', () => {
-    if (kjvText) parseBible();
-});
+    document.getElementById('oedipusFilter').addEventListener('change', () => {
+        if (kjvText) parseBible();
+    });
 
-['prevPage', 'prevPageBottom'].forEach(id => {
-    document.getElementById(id).addEventListener('click', () => goToPage(currentPage - 1));
-});
-['nextPage', 'nextPageBottom'].forEach(id => {
-    document.getElementById(id).addEventListener('click', () => goToPage(currentPage + 1));
-});
+    ['prevPage', 'prevPageBottom'].forEach(id => {
+        document.getElementById(id).addEventListener('click', () => goToPage(currentPage - 1));
+    });
+    ['nextPage', 'nextPageBottom'].forEach(id => {
+        document.getElementById(id).addEventListener('click', () => goToPage(currentPage + 1));
+    });
 
-document.getElementById('aqSquareInput').addEventListener('input', updateAqSquareSigil);
+    document.getElementById('aqSquareInput').addEventListener('input', updateAqSquareSigil);
+}
 
 // Init
-window.addEventListener('load', () => {
-    loadBible();
-    buildAqSquareGrid();
-    renderAqSquareSvgGrid();
-});
+if (typeof window !== 'undefined') {
+    window.addEventListener('load', () => {
+        loadBible();
+        buildAqSquareGrid();
+        renderAqSquareSvgGrid();
+    });
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        isPerfectSquare,
+        isTriangular
+    };
+}
